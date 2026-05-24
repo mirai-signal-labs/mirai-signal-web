@@ -1,0 +1,30 @@
+﻿name: Daily Pipeline
+
+on:
+  schedule:
+    - cron: '0 22 * * *'  # 毎日日本時間7時（UTC 22時）
+  workflow_dispatch:  # 手動実行も可能
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run pipeline
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          npx tsx scripts/save-articles.ts
+          npx tsx scripts/score-articles.ts
+          npx tsx scripts/summarize-articles.ts
+          npx tsx scripts/translate-articles.ts
