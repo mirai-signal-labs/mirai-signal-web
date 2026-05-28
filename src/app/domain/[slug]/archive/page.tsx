@@ -12,8 +12,6 @@ const DOMAINS: Record<string, { label: string; desc: string }> = {
   defense: { label: 'Defense', desc: 'defense AI・drone warfare・autonomous systems' },
 };
 
-const LATEST_LIMIT = 10;
-
 type Article = {
   id: string;
   title: string;
@@ -29,7 +27,7 @@ function formatDate(d: string | null): string {
   return new Date(d).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-export default async function DomainPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ArchivePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const domain = DOMAINS[slug];
   if (!domain) notFound();
@@ -40,12 +38,9 @@ export default async function DomainPage({ params }: { params: Promise<{ slug: s
     .select('id, title, url, source, published_at, summary, summary_ja', { count: 'exact' })
     .eq('status', 'approved')
     .eq('domain', slug)
-    .order('published_at', { ascending: false })
-    .limit(LATEST_LIMIT);
+    .order('published_at', { ascending: false });
 
   const items = (articles ?? []) as Article[];
-  const totalCount = count ?? 0;
-  const hasArchive = totalCount > LATEST_LIMIT;
 
   return (
     <div style={{ background: 'var(--ms-bg)', minHeight: '100vh' }}>
@@ -53,14 +48,14 @@ export default async function DomainPage({ params }: { params: Promise<{ slug: s
         <Link href='/' style={{ fontSize: '15px', fontWeight: 500, color: '#c8c4ff', letterSpacing: '0.06em', textDecoration: 'none' }}>
           Mirai<span style={{ color: 'var(--ms-accent-light)' }}>Signal</span>
         </Link>
-        <Link href='/' style={{ fontSize: '12px', color: 'var(--ms-text-secondary)', textDecoration: 'none' }}>← トップへ</Link>
+        <Link href={'/domain/' + slug} style={{ fontSize: '12px', color: 'var(--ms-text-secondary)', textDecoration: 'none' }}>← {domain.label}へ戻る</Link>
       </nav>
 
       <main style={{ maxWidth: '720px', margin: '0 auto', padding: '32px 24px' }}>
         <div style={{ marginBottom: '28px' }}>
-          <p style={{ fontSize: '11px', color: 'var(--ms-accent)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>{domain.label}</p>
+          <p style={{ fontSize: '11px', color: 'var(--ms-accent)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>{domain.label} Archive</p>
           <h1 style={{ fontSize: '22px', fontWeight: 500, color: '#e8e6ff', margin: '0 0 6px' }}>{domain.desc}</h1>
-          <p style={{ fontSize: '13px', color: 'var(--ms-text-secondary)', margin: 0 }}>最新{items.length}件 / 全{totalCount}件</p>
+          <p style={{ fontSize: '13px', color: 'var(--ms-text-secondary)', margin: 0 }}>全{count ?? 0}件</p>
         </div>
 
         <hr style={{ border: 'none', borderTop: '0.5px solid var(--ms-border)', marginBottom: '20px' }} />
@@ -84,14 +79,6 @@ export default async function DomainPage({ params }: { params: Promise<{ slug: s
               </li>
             ))}
           </ul>
-        )}
-
-        {hasArchive && (
-          <div style={{ marginTop: '24px', textAlign: 'center' }}>
-            <Link href={'/domain/' + slug + '/archive'} style={{ fontSize: '13px', color: 'var(--ms-accent)', textDecoration: 'none', border: '0.5px solid var(--ms-accent)', padding: '8px 20px', borderRadius: '20px' }}>
-              アーカイブを見る（全{totalCount}件）→
-            </Link>
-          </div>
         )}
       </main>
     </div>
