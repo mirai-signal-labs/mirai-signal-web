@@ -9,7 +9,7 @@ const MAX_ARTICLES = 10;
 const WAIT_MS = 13000;
 const MAX_RETRIES = 3;
 const RETRY_WAIT_MS = 30000;
-const SCORE_THRESHOLD = 28;
+const SCORE_THRESHOLD = 35;
 const MAX_SCORE = 50;
 
 const PROMPT = readFileSync(join(process.cwd(), 'scripts', 'process_prompt.txt'), 'utf-8');
