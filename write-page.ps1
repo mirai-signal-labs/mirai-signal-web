@@ -1,3 +1,4 @@
+$page = @'
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 
@@ -71,7 +72,7 @@ export default async function Home() {
         <aside className='ms-sidebar' style={{ background: '#0b0b14', borderRight: '0.5px solid #1e1e30', padding: '20px 0' }}>
           <div style={{ padding: '0 14px 16px', borderBottom: '0.5px solid #1e1e30', marginBottom: '8px' }}>
             <p style={{ fontSize: '9px', color: '#534ab7', letterSpacing: '0.1em', textTransform: 'uppercase', margin: '0 0 4px' }}>Detecting the Signals</p>
-            <p style={{ fontSize: '11px', color: '#5f5e5a', margin: 0 }}>Read the future first</p>
+<p style={{ fontSize: '11px', color: '#5f5e5a', margin: 0 }}>Read the future first</p>
           </div>
           {DOMAINS.map((d) => (
             <Link key={d.key} href={'/domain/' + d.key} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: getByDomain(d.key).length > 0 ? '#888780' : '#2c2c2a', padding: '7px 14px', textDecoration: 'none' }}>
@@ -95,7 +96,7 @@ export default async function Home() {
                     <span style={{ fontSize: '12px', fontWeight: 500, color: '#7f77dd' }}>{domain.label}</span>
                     <span style={{ fontSize: '10px', color: '#444441' }}>{domain.desc}</span>
                   </div>
-                  <Link href={'/domain/' + domain.key} style={{ fontSize: '10px', color: '#534ab7', textDecoration: 'none' }}>All articles</Link>
+                  <Link href={'/domain/' + domain.key} style={{ fontSize: '10px', color: '#534ab7', textDecoration: 'none' }}>すべて見る →</Link>
                 </div>
 
                 <div style={{ background: '#0e0e1a', border: '0.5px solid #1e1e30', borderLeft: '3px solid #534ab7', padding: '14px', marginBottom: '8px' }}>
@@ -103,7 +104,7 @@ export default async function Home() {
                   <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '6px', lineHeight: 1.5 }}>
                     <a href={featured.url} target='_blank' rel='noopener noreferrer' style={{ color: '#cecbf6', textDecoration: 'none' }}>{featured.title}</a>
                   </div>
-                  <div style={{ fontSize: '10px', color: '#3c3489', marginBottom: '6px' }}>{featured.source} - {formatDate(featured.published_at)}</div>
+                  <div style={{ fontSize: '10px', color: '#3c3489', marginBottom: '6px' }}>{featured.source} · {formatDate(featured.published_at)}</div>
                   <p style={{ fontSize: '11px', color: '#5f5e5a', lineHeight: 1.7, margin: 0 }}>{featured.summary_ja ?? featured.summary ?? '-'}</p>
                 </div>
 
@@ -112,7 +113,7 @@ export default async function Home() {
                     <span style={{ fontSize: '11px', color: '#26215c', fontWeight: 500, flexShrink: 0, width: '16px' }}>{i + 2}</span>
                     <div>
                       <a href={article.url} target='_blank' rel='noopener noreferrer' style={{ fontSize: '11px', color: '#afa9ec', textDecoration: 'none', lineHeight: 1.4, display: 'block', marginBottom: '3px' }}>{article.title}</a>
-                      <span style={{ fontSize: '10px', color: '#3c3489' }}>{article.source} - {formatDate(article.published_at)}</span>
+                      <span style={{ fontSize: '10px', color: '#3c3489' }}>{article.source} · {formatDate(article.published_at)}</span>
                     </div>
                   </div>
                 ))}
@@ -124,3 +125,5 @@ export default async function Home() {
     </div>
   );
 }
+'@
+[System.IO.File]::WriteAllText("src\app\page.tsx", $page, [System.Text.Encoding]::UTF8)

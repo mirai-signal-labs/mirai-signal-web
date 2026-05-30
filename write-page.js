@@ -1,4 +1,6 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+const fs = require('fs');
+
+const content = `import { createServerSupabaseClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 
 const DOMAINS = [
@@ -41,7 +43,7 @@ export default async function Home() {
 
   return (
     <div style={{ background: '#080810', minHeight: '100vh', color: '#afa9ec' }}>
-      <style>{`
+      <style>{\`
         .ms-layout { display: grid; grid-template-columns: 160px 1fr; min-height: calc(100vh - 45px); }
         .ms-sidebar { display: block; }
         .ms-domain-tabs { display: none; }
@@ -50,7 +52,7 @@ export default async function Home() {
           .ms-sidebar { display: none; }
           .ms-domain-tabs { display: flex; }
         }
-      `}</style>
+      \`}</style>
 
       <nav style={{ background: '#0b0b14', borderBottom: '0.5px solid #1e1e30', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ fontSize: '14px', fontWeight: 500, color: '#c8c4ff', letterSpacing: '0.06em' }}>
@@ -124,3 +126,7 @@ export default async function Home() {
     </div>
   );
 }
+`;
+
+fs.writeFileSync('src/app/page.tsx', content, 'utf8');
+console.log('Done!');

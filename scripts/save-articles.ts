@@ -7,6 +7,10 @@ const SOURCES = [
   { name: 'hackernews', url: 'https://news.ycombinator.com/rss', source: 'hackernews' },
   { name: 'techcrunch', url: 'https://techcrunch.com/category/artificial-intelligence/feed/', source: 'techcrunch' },
   { name: 'arxiv', url: 'https://arxiv.org/rss/cs.AI', source: 'arxiv' },
+  { name: 'ieee_spectrum', url: 'https://spectrum.ieee.org/feeds/feed.rss', source: 'ieee_spectrum' },
+  { name: 'mit_tech_review', url: 'https://www.technologyreview.com/feed/', source: 'mit_tech_review' },
+  { name: 'spacenews', url: 'https://spacenews.com/feed/', source: 'spacenews' },
+  { name: 'nature_biotech', url: 'https://www.nature.com/subjects/biotechnology.rss', source: 'nature_biotech' },
 ] as const;
 
 const MAX_ITEMS_PER_SOURCE = 10;
