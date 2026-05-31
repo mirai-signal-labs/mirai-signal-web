@@ -71,7 +71,7 @@ export default async function ArchivePage({ params }: { params: Promise<{ slug: 
                   <span style={{ fontSize: '11px', color: 'var(--ms-text-muted)' }}>{formatDate(article.published_at)}</span>
                 </div>
                 <h2 style={{ fontSize: '14px', fontWeight: 500, margin: '0 0 8px', lineHeight: 1.5 }}>
-                  <a href={article.url} target='_blank' rel='noopener noreferrer' style={{ color: 'var(--ms-text-primary)', textDecoration: 'none' }}>{article.title}</a>
+                  <Link href={'/article/' + article.id} style={{ color: 'var(--ms-text-primary)', textDecoration: 'none' }}>{article.title}</Link>
                 </h2>
                 <p style={{ fontSize: '12px', color: 'var(--ms-text-secondary)', lineHeight: 1.7, margin: 0 }}>
                   {article.summary_ja ?? article.summary ?? '-'}

@@ -101,7 +101,7 @@ export default async function Home() {
                 <div style={{ background: '#0e0e1a', border: '0.5px solid #1e1e30', borderLeft: '3px solid #534ab7', padding: '14px', marginBottom: '8px' }}>
                   <span style={{ fontSize: '9px', color: '#7f77dd', background: '#1a1830', padding: '2px 8px', borderRadius: '20px', letterSpacing: '0.06em', display: 'inline-block', marginBottom: '8px' }}>TOP SIGNAL</span>
                   <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '6px', lineHeight: 1.5 }}>
-                    <a href={featured.url} target='_blank' rel='noopener noreferrer' style={{ color: '#cecbf6', textDecoration: 'none' }}>{featured.title}</a>
+                    <Link href={'/article/' + featured.id} style={{ color: '#cecbf6', textDecoration: 'none' }}>{featured.title}</Link>
                   </div>
                   <div style={{ fontSize: '10px', color: '#3c3489', marginBottom: '6px' }}>{featured.source} - {formatDate(featured.published_at)}</div>
                   <p style={{ fontSize: '11px', color: '#5f5e5a', lineHeight: 1.7, margin: 0 }}>{featured.summary_ja ?? featured.summary ?? '-'}</p>
@@ -111,7 +111,7 @@ export default async function Home() {
                   <div key={article.id} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '8px 10px', background: '#0e0e1a', border: '0.5px solid #1e1e30', marginBottom: '4px' }}>
                     <span style={{ fontSize: '11px', color: '#26215c', fontWeight: 500, flexShrink: 0, width: '16px' }}>{i + 2}</span>
                     <div>
-                      <a href={article.url} target='_blank' rel='noopener noreferrer' style={{ fontSize: '11px', color: '#afa9ec', textDecoration: 'none', lineHeight: 1.4, display: 'block', marginBottom: '3px' }}>{article.title}</a>
+                      <Link href={'/article/' + article.id} style={{ fontSize: '11px', color: '#afa9ec', textDecoration: 'none', lineHeight: 1.4, display: 'block', marginBottom: '3px' }}>{article.title}</Link>
                       <span style={{ fontSize: '10px', color: '#3c3489' }}>{article.source} - {formatDate(article.published_at)}</span>
                     </div>
                   </div>
