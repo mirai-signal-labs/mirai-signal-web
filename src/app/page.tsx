@@ -53,7 +53,7 @@ export default async function Home() {
       `}</style>
 
       <nav style={{ background: '#0b0b14', borderBottom: '0.5px solid #1e1e30', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontSize: '14px', fontWeight: 500, color: '#c8c4ff', letterSpacing: '0.06em' }}>
+       <div style={{ fontSize: '16px', fontWeight: 600, color: '#c8c4ff', letterSpacing: '0.06em' }}>
           Mirai<span style={{ color: '#7f77dd' }}>Signal</span>
         </div>
         <Link href='/admin' style={{ fontSize: '11px', color: '#444441', textDecoration: 'none' }}>Admin</Link>
@@ -70,8 +70,8 @@ export default async function Home() {
       <div className='ms-layout'>
         <aside className='ms-sidebar' style={{ background: '#0b0b14', borderRight: '0.5px solid #1e1e30', padding: '20px 0' }}>
           <div style={{ padding: '0 14px 16px', borderBottom: '0.5px solid #1e1e30', marginBottom: '8px' }}>
-            <p style={{ fontSize: '9px', color: '#534ab7', letterSpacing: '0.1em', textTransform: 'uppercase', margin: '0 0 4px' }}>Detecting the Signals</p>
-            <p style={{ fontSize: '11px', color: '#5f5e5a', margin: 0 }}>Read the future first</p>
+            <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.12em', textTransform: 'uppercase', margin: '0 0 6px', fontWeight: 500 }}>Detecting the Signals</p>
+<p style={{ fontSize: '12px', color: '#888780', margin: 0, lineHeight: 1.5 }}>Read the future first</p>
           </div>
           {DOMAINS.map((d) => (
             <Link key={d.key} href={'/domain/' + d.key} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: getByDomain(d.key).length > 0 ? '#888780' : '#2c2c2a', padding: '7px 14px', textDecoration: 'none' }}>
