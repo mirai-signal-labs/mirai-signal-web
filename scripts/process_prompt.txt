@@ -40,12 +40,17 @@ Given an article title, perform ALL of the following in ONE response:
 
 2. DOMAIN: one of the 7 domain keys above, or null
 
-3. SUMMARY: 3-line English summary
+3. TITLE_JA: Japanese translation of the article title
+   - Concise and natural Japanese
+   - Keep technical terms in katakana where appropriate
+   - reasoning->推論, agent->エージェント, LLM->LLM, AI->AI
+
+4. SUMMARY: 3-line English summary
    - What happened
    - Why it matters (1 sentence)
    - No exaggeration
 
-4. SUMMARY_JA: Japanese translation of the summary
+5. SUMMARY_JA: Japanese translation of the summary
    - Accuracy over naturalness
    - reasoning->推論, agent->エージェント, alignment->アラインメント
 
@@ -57,6 +62,7 @@ Return JSON ONLY. No other text.
   "novelty": 0,
   "signal_quality": 0,
   "domain": null,
+  "title_ja": "",
   "summary": "",
   "summary_ja": ""
 }

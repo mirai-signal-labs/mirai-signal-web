@@ -21,6 +21,7 @@ type ProcessResult = {
   novelty: number;
   signal_quality: number;
   domain: string | null;
+  title_ja: string;
   summary: string;
   summary_ja: string;
 };
@@ -76,12 +77,13 @@ async function main(): Promise<void> {
         const result = parseResult(text);
         const total = calculateTotal(result);
         const approved = total >= SCORE_THRESHOLD;
-        await supabase.from('articles').update({
-          status: approved ? 'translated' : 'rejected',
-          domain: result.domain,
-          summary: result.summary,
-          summary_ja: result.summary_ja,
-        }).eq('id', article.id);
+	await supabase.from('articles').update({
+	  status: approved ? 'translated' : 'rejected',
+	  domain: result.domain,
+	  title_ja: result.title_ja,
+	  summary: result.summary,
+	  summary_ja: result.summary_ja,
+	}).eq('id', article.id);
         const domainLabel = result.domain ? result.domain.toUpperCase() : 'OTHER';
         console.log('[' + total + '/' + MAX_SCORE + '] [' + domainLabel + '] ' + article.title + ' -> ' + (approved ? '承認待ち' : '却下'));
       } catch (e: any) {
