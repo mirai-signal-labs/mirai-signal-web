@@ -22,8 +22,8 @@ type Article = {
   published_at: string | null;
   summary: string | null;
   summary_ja: string | null;
+  title_ja: string | null;
 };
-
 function formatDate(d: string | null): string {
   if (!d) return "-";
   return new Date(d).toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" });
@@ -37,7 +37,7 @@ export default async function DomainPage({ params }: { params: Promise<{ slug: s
   const supabase = createServerSupabaseClient();
   const { data: articles, count } = await supabase
     .from("articles")
-    .select("id, title, url, source, published_at, summary, summary_ja", { count: "exact" })
+	.select("id, title, url, source, published_at, summary, summary_ja, title_ja", { count: "exact" })
     .eq("status", "approved")
     .eq("domain", slug)
     .order("published_at", { ascending: false })
@@ -107,7 +107,15 @@ export default async function DomainPage({ params }: { params: Promise<{ slug: s
                     <span style={{ fontSize: "11px", color: "#3c3489" }}>{formatDate(article.published_at)}</span>
                   </div>
                   <h2 style={{ fontSize: "14px", fontWeight: 500, margin: "0 0 8px", lineHeight: 1.5 }}>
-                    <Link href={"/article/" + article.id} style={{ color: "#afa9ec", textDecoration: "none" }}>{article.title}</Link>
+                    <Link href={"/article/" + article.id} style={{ color: "#afa9ec", textDecoration: "none" }}>
+  {article.title_ja ?? article.title}
+</Link>
+{article.title_ja && (
+  <p style={{ fontSize: "11px", color: "#444441", margin: "4px 0 0", lineHeight: 1.5 }}>{article.title}</p>
+)}
+{article.title_ja && (
+  <p style={{ fontSize: "12px", color: "#7f77dd", margin: "4px 0 0", lineHeight: 1.5 }}>{article.title_ja}</p>
+)}
                   </h2>
                   <p style={{ fontSize: "12px", color: "#5f5e5a", lineHeight: 1.7, margin: 0 }}>
                     {article.summary_ja ?? article.summary ?? "-"}

@@ -20,6 +20,7 @@ type Article = {
   summary_ja: string | null;
   summary: string | null;
   domain: string | null;
+  title_ja: string | null;
 };
 
 function formatDate(d: string | null): string {
@@ -31,8 +32,7 @@ export default async function Home() {
   const supabase = createServerSupabaseClient();
   const { data: articles } = await supabase
     .from('articles')
-    .select('id, title, url, source, published_at, summary, summary_ja, domain')
-    .eq('status', 'approved')
+    .select('id, title, url, source, published_at, summary, summary_ja, domain, title_ja')    .eq('status', 'approved')
     .order('published_at', { ascending: false })
     .limit(100);
 
@@ -101,7 +101,11 @@ export default async function Home() {
                 <div style={{ background: '#0e0e1a', border: '0.5px solid #1e1e30', borderLeft: '3px solid #534ab7', padding: '14px', marginBottom: '8px' }}>
                   <span style={{ fontSize: '9px', color: '#7f77dd', background: '#1a1830', padding: '2px 8px', borderRadius: '20px', letterSpacing: '0.06em', display: 'inline-block', marginBottom: '8px' }}>TOP SIGNAL</span>
                   <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '6px', lineHeight: 1.5 }}>
-                    <Link href={'/article/' + featured.id} style={{ color: '#cecbf6', textDecoration: 'none' }}>{featured.title}</Link>
+                    <Link href={'/article/' + featured.id} style={{ color: '#cecbf6', textDecoration: 'none' }}>
+  {featured.title_ja ?? featured.title}
+</Link>
+{featured.title_ja && <p style={{ fontSize: '11px', color: '#444441', margin: '4px 0 0', lineHeight: 1.5 }}>{featured.title}</p>}
+
                   </div>
                   <div style={{ fontSize: '10px', color: '#3c3489', marginBottom: '6px' }}>{featured.source} - {formatDate(featured.published_at)}</div>
                   <p style={{ fontSize: '11px', color: '#5f5e5a', lineHeight: 1.7, margin: 0 }}>{featured.summary_ja ?? featured.summary ?? '-'}</p>

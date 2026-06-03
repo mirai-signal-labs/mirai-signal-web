@@ -58,9 +58,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
               {domainLabel}
             </Link>
           )}
-          <h1 style={{ fontSize: "22px", fontWeight: 500, color: "#e8e6ff", lineHeight: 1.6, margin: "0 0 16px" }}>
-            {article.title}
-          </h1>
+<h1 style={{ fontSize: "22px", fontWeight: 500, color: "#e8e6ff", lineHeight: 1.6, margin: "0 0 8px" }}>
+  {article.title_ja ?? article.title}
+</h1>
+{article.title_ja && (
+  <p style={{ fontSize: "13px", color: "#444441", margin: "0 0 12px", lineHeight: 1.5 }}>
+    {article.title}
+  </p>
+)}
           <div style={{ display: "flex", gap: "12px", fontSize: "12px", color: "#3c3489", alignItems: "center" }}>
             <span style={{ background: "#0e0e1a", border: "0.5px solid #1e1e30", padding: "2px 10px", borderRadius: "4px" }}>{article.source ?? "-"}</span>
             <span>{formatDate(article.published_at)}</span>
