@@ -11,6 +11,9 @@ const SOURCES = [
   { name: 'mit_tech_review', url: 'https://www.technologyreview.com/feed/', source: 'mit_tech_review' },
   { name: 'spacenews', url: 'https://spacenews.com/feed/', source: 'spacenews' },
   { name: 'nature_biotech', url: 'https://www.nature.com/subjects/biotechnology.rss', source: 'nature_biotech' },
+  { name: 'defense_one', url: 'https://www.defenseone.com/rss/all/', source: 'defense_one' },
+  { name: 'robot_report', url: 'https://www.therobotreport.com/feed/', source: 'robot_report' },
+  { name: 'electrek', url: 'https://electrek.co/feed/', source: 'electrek' },
 ] as const;
 
 const MAX_ITEMS_PER_SOURCE = 10;
