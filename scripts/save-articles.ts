@@ -14,6 +14,8 @@ const SOURCES = [
   { name: 'defense_one', url: 'https://www.defenseone.com/rss/all/', source: 'defense_one' },
   { name: 'robot_report', url: 'https://www.therobotreport.com/feed/', source: 'robot_report' },
   { name: 'electrek', url: 'https://electrek.co/feed/', source: 'electrek' },
+{ name: 'techcrunch_startups', url: 'https://techcrunch.com/category/startups/feed/', source: 'techcrunch_startups' },
+  { name: 'venturebeat', url: 'https://venturebeat.com/feed/', source: 'venturebeat' },
 ] as const;
 
 const MAX_ITEMS_PER_SOURCE = 10;
