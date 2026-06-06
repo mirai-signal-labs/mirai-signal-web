@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import Link from 'next/link';
+import SubscribeForm from '@/app/components/SubscribeForm';
 
 const DOMAINS = [
   { key: 'ai', label: 'AI', desc: 'LLM / Agents / AGI / OSS' },
@@ -123,6 +124,12 @@ export default async function Home() {
               </div>
             );
           })}
+<div style={{ marginTop: '40px', padding: '24px', background: '#0e0e1a', border: '0.5px solid #1e1e30', borderRadius: '8px' }}>
+          <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.1em', textTransform: 'uppercase', margin: '0 0 8px' }}>Newsletter</p>
+          <h2 style={{ fontSize: '16px', fontWeight: 500, color: '#e8e6ff', margin: '0 0 6px' }}>毎朝の注目記事を届ける</h2>
+          <p style={{ fontSize: '12px', color: '#5f5e5a', margin: '0 0 16px' }}>海外AI・テクノロジーの最新動向をメールでお届けします</p>
+          <SubscribeForm />
+        </div>
         </main>
       </div>
     </div>

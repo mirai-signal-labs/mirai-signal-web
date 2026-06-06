@@ -26,3 +26,4 @@ jobs:
         run: |
           npx tsx scripts/save-articles.ts
           npx tsx scripts/process-articles.ts
+	  npx tsx scripts/send-newsletter.ts
