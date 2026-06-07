@@ -2,6 +2,30 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const domain = DOMAINS[slug];
+  if (!domain) return {};
+
+  return {
+    title: `${domain.label} - ${domain.desc}`,
+    description: `海外${domain.label}分野の最新技術情報を毎日日本語で届けます。${domain.desc}に関する一次情報をAIで収集・分析・翻訳。`,
+    openGraph: {
+      title: `${domain.label} | Mirai Signal`,
+      description: `海外${domain.label}分野の最新技術情報を毎日日本語で届けます。`,
+      url: `https://mirai-signal-web-kzfb.vercel.app/domain/${slug}`,
+      siteName: "Mirai Signal",
+      locale: "ja_JP",
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: `${domain.label} | Mirai Signal`,
+      description: `海外${domain.label}分野の最新技術情報を毎日日本語で届けます。`,
+    },
+  };
+}
+
 const DOMAINS: Record<string, { label: string; desc: string }> = {
   ai: { label: "AI", desc: "LLM / Agents / AGI / OSS" },
   robotics: { label: "Robotics", desc: "Embodied AI / Autonomous Robots" },
