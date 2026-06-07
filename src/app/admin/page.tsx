@@ -12,6 +12,7 @@ type Article = {
   published_at: string | null;
   summary: string | null;
   summary_ja: string | null;
+  score: number | null;
 };
 
 function formatDate(dateString: string | null): string {
@@ -84,7 +85,7 @@ export default async function AdminPage() {
   const supabase = createServerSupabaseClient();
   const { data: articles, error } = await supabase
     .from("articles")
-    .select("id, title, url, source, published_at, summary, summary_ja")
+    .select("id, title, url, source, published_at, summary, summary_ja, score")
     .in("status", ["summarized", "translated"])
     .order("published_at", { ascending: false });
 
@@ -128,9 +129,15 @@ export default async function AdminPage() {
                   <span style={{ fontSize: "10px", color: "var(--ms-accent-light)", background: "var(--ms-accent-dim)", padding: "2px 8px", borderRadius: "20px" }}>
                     {article.source ?? "-"}
                   </span>
+
                   <span style={{ fontSize: "11px", color: "var(--ms-text-muted)" }}>
                     {formatDate(article.published_at)}
                   </span>
+{article.score && (
+  <span style={{ marginLeft: 'auto', fontSize: '11px', color: article.score >= 40 ? '#1d9e75' : article.score >= 30 ? '#7f77dd' : '#888780', background: '#0e0e1a', padding: '2px 8px', borderRadius: '4px', border: '0.5px solid #1e1e30' }}>
+    {article.score}/50
+  </span>
+)}
                 </div>
                 <h2 style={{ fontSize: "14px", fontWeight: 500, margin: "0 0 8px", lineHeight: 1.5 }}>
                   <a href={article.url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--ms-text-primary)", textDecoration: "none" }}>
