@@ -2,6 +2,39 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const supabase = createServerSupabaseClient();
+  const { data: article } = await supabase
+    .from("articles")
+    .select("title, title_ja, summary_ja, summary, domain")
+    .eq("id", id)
+    .single();
+
+  if (!article) return {};
+
+  const title = article.title_ja ?? article.title;
+  const description = (article.summary_ja ?? article.summary ?? "").slice(0, 120);
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `https://mirai-signal-web-kzfb.vercel.app/article/${id}`,
+      siteName: "Mirai Signal",
+      locale: "ja_JP",
+      type: "article",
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+  };
+}
+
 const DOMAIN_LABELS: Record<string, string> = {
   ai: "AI",
   robotics: "Robotics",
