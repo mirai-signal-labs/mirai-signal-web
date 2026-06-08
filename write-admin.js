@@ -1,4 +1,7 @@
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+const fs = require('fs');
+const path = require('path');
+
+const content = `import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -157,14 +160,14 @@ export default async function AdminPage({
           {tabs.map((t) => (
             <a
               key={t.key}
-              href={`/admin?tab=${t.key}`}
+              href={\`/admin?tab=\${t.key}\`}
               style={{
                 fontSize: "13px",
                 padding: "8px 16px",
                 borderRadius: "6px 6px 0 0",
                 textDecoration: "none",
                 color: tab === t.key ? t.color : "var(--ms-text-secondary)",
-                borderBottom: tab === t.key ? `2px solid ${t.color}` : "2px solid transparent",
+                borderBottom: tab === t.key ? \`2px solid \${t.color}\` : "2px solid transparent",
                 fontWeight: tab === t.key ? 500 : 400,
               }}
             >
@@ -189,11 +192,11 @@ export default async function AdminPage({
               <li key={article.id} style={{
                 background: "var(--ms-bg-card)",
                 border: "0.5px solid var(--ms-border)",
-                borderLeft: `2px solid ${
+                borderLeft: \`2px solid \${
                   tab === "approved" ? "#1d9e75" :
                   tab === "rejected" ? "#e05a5a" :
                   "var(--ms-accent)"
-                }`,
+                }\`,
                 borderRadius: "0 8px 8px 0",
                 padding: "18px"
               }}>
@@ -277,3 +280,8 @@ export default async function AdminPage({
     </div>
   );
 }
+`;
+
+const outputPath = path.join(process.cwd(), 'src', 'app', 'admin', 'page.tsx');
+fs.writeFileSync(outputPath, content, 'utf8');
+console.log('書き込み完了: ' + outputPath);
