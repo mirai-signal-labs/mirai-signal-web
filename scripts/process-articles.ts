@@ -151,8 +151,9 @@ async function main(): Promise<void> {
             summary: result.summary,
             summary_ja: result.summary_ja,
             score: total,
-          }).eq('id', article.id);
-
+	}).eq('id', article.id).select().then(({data, error}) => {
+  console.log('DB更新結果:', JSON.stringify({id: article.id, error, data}, null, 2));
+});
           const domainLabel = result.domains.length > 0
             ? result.domains.map(d => d.toUpperCase()).join('+')
             : 'OTHER';
