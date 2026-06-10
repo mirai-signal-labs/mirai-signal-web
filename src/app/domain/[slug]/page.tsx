@@ -137,9 +137,7 @@ export default async function DomainPage({ params }: { params: Promise<{ slug: s
 {article.title_ja && (
   <p style={{ fontSize: "11px", color: "#444441", margin: "4px 0 0", lineHeight: 1.5 }}>{article.title}</p>
 )}
-{article.title_ja && (
-  <p style={{ fontSize: "12px", color: "#7f77dd", margin: "4px 0 0", lineHeight: 1.5 }}>{article.title_ja}</p>
-)}
+
                   </h2>
                   <p style={{ fontSize: "12px", color: "#5f5e5a", lineHeight: 1.7, margin: 0 }}>
                     {article.summary_ja ?? article.summary ?? "-"}
