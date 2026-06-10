@@ -35,7 +35,8 @@ export default async function Home() {
   const supabase = createServerSupabaseClient();
   const { data: articles } = await supabase
     .from('articles')
-    .select('id, title, url, source, published_at, summary, summary_ja, domain, title_ja')    .eq('status', 'approved')
+    .select('id, title, url, source, published_at, summary, summary_ja, domain, title_ja')
+    .eq('status', 'approved')
     .order('published_at', { ascending: false })
     .limit(100);
 
@@ -56,7 +57,7 @@ export default async function Home() {
       \`}</style>
 
       <nav style={{ background: '#0b0b14', borderBottom: '0.5px solid #1e1e30', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-       <div style={{ fontSize: '16px', fontWeight: 600, color: '#c8c4ff', letterSpacing: '0.06em' }}>
+        <div style={{ fontSize: '16px', fontWeight: 600, color: '#c8c4ff', letterSpacing: '0.06em' }}>
           Mirai<span style={{ color: '#7f77dd' }}>Signal</span>
         </div>
         <Link href='/admin' style={{ fontSize: '11px', color: '#444441', textDecoration: 'none' }}>Admin</Link>
@@ -74,7 +75,7 @@ export default async function Home() {
         <aside className='ms-sidebar' style={{ background: '#0b0b14', borderRight: '0.5px solid #1e1e30', padding: '20px 0' }}>
           <div style={{ padding: '0 14px 16px', borderBottom: '0.5px solid #1e1e30', marginBottom: '8px' }}>
             <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.12em', textTransform: 'uppercase', margin: '0 0 6px', fontWeight: 500 }}>Detecting the Signals</p>
-<p style={{ fontSize: '12px', color: '#888780', margin: 0, lineHeight: 1.5 }}>Read the future first</p>
+            <p style={{ fontSize: '12px', color: '#888780', margin: 0, lineHeight: 1.5 }}>Read the future first</p>
           </div>
           {DOMAINS.map((d) => (
             <Link key={d.key} href={'/domain/' + d.key} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: getByDomain(d.key).length > 0 ? '#888780' : '#2c2c2a', padding: '7px 14px', textDecoration: 'none' }}>
@@ -105,10 +106,9 @@ export default async function Home() {
                   <span style={{ fontSize: '9px', color: '#7f77dd', background: '#1a1830', padding: '2px 8px', borderRadius: '20px', letterSpacing: '0.06em', display: 'inline-block', marginBottom: '8px' }}>TOP SIGNAL</span>
                   <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '6px', lineHeight: 1.5 }}>
                     <Link href={'/article/' + featured.id} style={{ color: '#cecbf6', textDecoration: 'none' }}>
-  {featured.title_ja ?? featured.title}
-</Link>
-{featured.title_ja && <p style={{ fontSize: '11px', color: '#444441', margin: '4px 0 0', lineHeight: 1.5 }}>{featured.title}</p>}
-
+                      {featured.title_ja ?? featured.title}
+                    </Link>
+                    {featured.title_ja && <p style={{ fontSize: '11px', color: '#444441', margin: '4px 0 0', lineHeight: 1.5 }}>{featured.title}</p>}
                   </div>
                   <div style={{ fontSize: '10px', color: '#3c3489', marginBottom: '6px' }}>{featured.source} - {formatDate(featured.published_at)}</div>
                   <p style={{ fontSize: '11px', color: '#5f5e5a', lineHeight: 1.7, margin: 0 }}>{featured.summary_ja ?? featured.summary ?? '-'}</p>
@@ -126,12 +126,13 @@ export default async function Home() {
               </div>
             );
           })}
-<div style={{ marginTop: '40px', padding: '24px', background: '#0e0e1a', border: '0.5px solid #1e1e30', borderRadius: '8px' }}>
-          <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.1em', textTransform: 'uppercase', margin: '0 0 8px' }}>Newsletter</p>
-          <h2 style={{ fontSize: '16px', fontWeight: 500, color: '#e8e6ff', margin: '0 0 6px' }}>毎朝の注目記事を届ける</h2>
-          <p style={{ fontSize: '12px', color: '#5f5e5a', margin: '0 0 16px' }}>海外AI・テクノロジーの最新動向をメールでお届けします</p>
-          <SubscribeForm />
-        </div>
+
+          <div style={{ marginTop: '40px', padding: '24px', background: '#0e0e1a', border: '0.5px solid #1e1e30', borderRadius: '8px' }}>
+            <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.1em', textTransform: 'uppercase', margin: '0 0 8px' }}>Newsletter</p>
+            <h2 style={{ fontSize: '16px', fontWeight: 500, color: '#e8e6ff', margin: '0 0 6px' }}>毎朝の注目記事を届ける</h2>
+            <p style={{ fontSize: '12px', color: '#5f5e5a', margin: '0 0 16px' }}>海外AI・テクノロジーの最新動向をメールでお届けします</p>
+            <SubscribeForm />
+          </div>
         </main>
       </div>
     </div>
