@@ -1,4 +1,4 @@
-﻿import { config } from 'dotenv';
+import { config } from 'dotenv';
 config({ path: '.env.local' });
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@supabase/supabase-js';
@@ -142,7 +142,7 @@ async function main(): Promise<void> {
           const result = results[j];
           const total = result.total_score;
           const approved = total >= SCORE_THRESHOLD;
-          const primaryDomain = result.domains.length > 0 ? result.domains[0].toLowerCase() : null;
+          const primaryDomain = result.domains.length > 0 ? result.domains[0] : null;
 
           await supabase.from('articles').update({
             status: approved ? 'translated' : 'rejected',
@@ -151,9 +151,8 @@ async function main(): Promise<void> {
             summary: result.summary,
             summary_ja: result.summary_ja,
             score: total,
-	}).eq('id', article.id).select().then(({data, error}) => {
-  console.log('DB更新結果:', JSON.stringify({id: article.id, error, data}, null, 2));
-});
+          }).eq('id', article.id);
+
           const domainLabel = result.domains.length > 0
             ? result.domains.map(d => d.toUpperCase()).join('+')
             : 'OTHER';
@@ -178,7 +177,7 @@ async function main(): Promise<void> {
             const result = parseOneResult(JSON.parse(jsonMatch[0]));
             const total = result.total_score;
             const approved = total >= SCORE_THRESHOLD;
-            const primaryDomain = result.domains.length > 0 ? result.domains[0].toLowerCase() : null;
+            const primaryDomain = result.domains.length > 0 ? result.domains[0] : null;
 
             await supabase.from('articles').update({
               status: approved ? 'translated' : 'rejected',
