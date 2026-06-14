@@ -1,3 +1,5 @@
+export const revalidate = 0;
+
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import SubscribeForm from '@/app/components/SubscribeForm';
@@ -10,6 +12,7 @@ const DOMAINS = [
   { key: 'energy', label: 'Energy', desc: 'Fusion / Battery Tech' },
   { key: 'space', label: 'Space', desc: 'SpaceX / Satellite AI' },
   { key: 'defense', label: 'Defense', desc: 'Defense AI / Drone' },
+  { key: 'other', label: 'Other', desc: 'Other Technology' },
 ] as const;
 
 type Article = {
@@ -31,14 +34,26 @@ function formatDate(d: string | null): string {
 
 export default async function Home() {
   const supabase = createServerSupabaseClient();
-  const { data: articles } = await supabase
+
+  // 陦ｨ遉ｺ逕ｨ險倅ｺ九ｒ蜿門ｾ暦ｼ域怙譁ｰ100莉ｶ・・  const { data: articles } = await supabase
     .from('articles')
     .select('id, title, url, source, published_at, summary, summary_ja, domain, title_ja')
     .eq('status', 'approved')
     .order('published_at', { ascending: false })
     .limit(100);
 
+  // 繝峨Γ繧､繝ｳ縺斐→縺ｮ蜈ｨ莉ｶ謨ｰ繧貞叙蠕・  const { data: countData } = await supabase
+    .from('articles')
+    .select('domain')
+    .eq('status', 'approved');
+
   const items = (articles ?? []) as Article[];
+
+  // 繝峨Γ繧､繝ｳ縺斐→縺ｮ蜈ｨ莉ｶ謨ｰ繧帝寔險・  const domainCounts: Record<string, number> = {};
+  (countData ?? []).forEach((a) => {
+    if (a.domain) domainCounts[a.domain] = (domainCounts[a.domain] || 0) + 1;
+  });
+
   const getByDomain = (key: string) => items.filter((a) => a.domain === key);
 
   return (
@@ -75,13 +90,16 @@ export default async function Home() {
             <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.12em', textTransform: 'uppercase', margin: '0 0 6px', fontWeight: 500 }}>Detecting the Signals</p>
             <p style={{ fontSize: '12px', color: '#888780', margin: 0, lineHeight: 1.5 }}>Read the future first</p>
           </div>
-          {DOMAINS.map((d) => (
-            <Link key={d.key} href={'/domain/' + d.key} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: getByDomain(d.key).length > 0 ? '#888780' : '#2c2c2a', padding: '7px 14px', textDecoration: 'none' }}>
-              <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: getByDomain(d.key).length > 0 ? '#534ab7' : '#1e1e30', flexShrink: 0 }}></span>
-              {d.label}
-              {getByDomain(d.key).length > 0 && <span style={{ marginLeft: 'auto', fontSize: '10px', color: '#26215c' }}>{getByDomain(d.key).length}</span>}
-            </Link>
-          ))}
+          {DOMAINS.map((d) => {
+            const totalCount = domainCounts[d.key] || 0;
+            return (
+              <Link key={d.key} href={'/domain/' + d.key} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: totalCount > 0 ? '#888780' : '#2c2c2a', padding: '7px 14px', textDecoration: 'none' }}>
+                <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: totalCount > 0 ? '#534ab7' : '#1e1e30', flexShrink: 0 }}></span>
+                {d.label}
+                {totalCount > 0 && <span style={{ marginLeft: 'auto', fontSize: '10px', color: '#26215c' }}>{totalCount}</span>}
+              </Link>
+            );
+          })}
         </aside>
 
         <main style={{ padding: '24px', overflowY: 'auto' }}>
@@ -127,8 +145,8 @@ export default async function Home() {
 
           <div style={{ marginTop: '40px', padding: '24px', background: '#0e0e1a', border: '0.5px solid #1e1e30', borderRadius: '8px' }}>
             <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.1em', textTransform: 'uppercase', margin: '0 0 8px' }}>Newsletter</p>
-            <h2 style={{ fontSize: '16px', fontWeight: 500, color: '#e8e6ff', margin: '0 0 6px' }}>毎朝の注目記事を届ける</h2>
-            <p style={{ fontSize: '12px', color: '#5f5e5a', margin: '0 0 16px' }}>海外AI・テクノロジーの最新動向をメールでお届けします</p>
+            <h2 style={{ fontSize: '16px', fontWeight: 500, color: '#e8e6ff', margin: '0 0 6px' }}>豈取悃縺ｮ豕ｨ逶ｮ險倅ｺ九ｒ螻翫￠繧・/h2>
+            <p style={{ fontSize: '12px', color: '#5f5e5a', margin: '0 0 16px' }}>豬ｷ螟泡I繝ｻ繝・け繝弱Ο繧ｸ繝ｼ縺ｮ譛譁ｰ蜍募髄繧偵Γ繝ｼ繝ｫ縺ｧ縺雁ｱ翫￠縺励∪縺・/p>
             <SubscribeForm />
           </div>
         </main>
