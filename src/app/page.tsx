@@ -35,21 +35,21 @@ function formatDate(d: string | null): string {
 export default async function Home() {
   const supabase = createServerSupabaseClient();
 
-  // 陦ｨ遉ｺ逕ｨ險倅ｺ九ｒ蜿門ｾ暦ｼ域怙譁ｰ100莉ｶ・・  const { data: articles } = await supabase
+  const { data: articles } = await supabase
     .from('articles')
     .select('id, title, url, source, published_at, summary, summary_ja, domain, title_ja')
     .eq('status', 'approved')
     .order('published_at', { ascending: false })
     .limit(100);
 
-  // 繝峨Γ繧､繝ｳ縺斐→縺ｮ蜈ｨ莉ｶ謨ｰ繧貞叙蠕・  const { data: countData } = await supabase
+  const { data: countData } = await supabase
     .from('articles')
     .select('domain')
     .eq('status', 'approved');
 
   const items = (articles ?? []) as Article[];
 
-  // 繝峨Γ繧､繝ｳ縺斐→縺ｮ蜈ｨ莉ｶ謨ｰ繧帝寔險・  const domainCounts: Record<string, number> = {};
+  const domainCounts: Record<string, number> = {};
   (countData ?? []).forEach((a) => {
     if (a.domain) domainCounts[a.domain] = (domainCounts[a.domain] || 0) + 1;
   });
@@ -145,8 +145,8 @@ export default async function Home() {
 
           <div style={{ marginTop: '40px', padding: '24px', background: '#0e0e1a', border: '0.5px solid #1e1e30', borderRadius: '8px' }}>
             <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.1em', textTransform: 'uppercase', margin: '0 0 8px' }}>Newsletter</p>
-            <h2 style={{ fontSize: '16px', fontWeight: 500, color: '#e8e6ff', margin: '0 0 6px' }}>豈取悃縺ｮ豕ｨ逶ｮ險倅ｺ九ｒ螻翫￠繧・/h2>
-            <p style={{ fontSize: '12px', color: '#5f5e5a', margin: '0 0 16px' }}>豬ｷ螟泡I繝ｻ繝・け繝弱Ο繧ｸ繝ｼ縺ｮ譛譁ｰ蜍募髄繧偵Γ繝ｼ繝ｫ縺ｧ縺雁ｱ翫￠縺励∪縺・/p>
+            <h2 style={{ fontSize: '16px', fontWeight: 500, color: '#e8e6ff', margin: '0 0 6px' }}>毎朝の注目記事を届ける</h2>
+            <p style={{ fontSize: '12px', color: '#5f5e5a', margin: '0 0 16px' }}>海外AI・テクノロジーの最新動向をメールでお届けします</p>
             <SubscribeForm />
           </div>
         </main>
