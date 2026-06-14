@@ -18,6 +18,7 @@ const DOMAINS: Record<string, string> = {
   energy: "Energy",
   space: "Space",
   defense: "Defense",
+  other: "Other",
 };
 
 function formatDate(d: string | null): string {
@@ -30,23 +31,20 @@ function formatDate(d: string | null): string {
 }
 
 async function main(): Promise<void> {
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
+  const today = new Date();
 
-
+  // approved記事を最新10件取得（日付フィルターなし）
   const { data: articles } = await supabase
     .from("articles")
     .select("id, title, title_ja, url, source, published_at, summary_ja, summary, domain")
     .eq("status", "approved")
-    .gte("published_at", today.toISOString())
     .order("published_at", { ascending: false })
     .limit(10);
 
   console.log("取得件数:", articles?.length);
-  console.log("記事:", JSON.stringify(articles, null, 2));
 
   if (!articles?.length) {
-    console.log("今日の記事がありません");
+    console.log("記事がありません");
     return;
   }
 
@@ -70,11 +68,13 @@ async function main(): Promise<void> {
         <h2 style="font-size:15px;margin:8px 0 4px;">
           <a href="https://mirai-signal-web-kzfb.vercel.app/article/${a.id}" style="color:#afa9ec;text-decoration:none;">${title}</a>
         </h2>
-        <p style="font-size:11px;color:#3c3489;margin:0 0 8px;">${a.source ?? ""} · ${formatDate(a.published_at)}</p>
+        <p style="font-size:11px;color:#3c3489;margin:0 0 8px;">${a.source ?? ""} &middot; ${formatDate(a.published_at)}</p>
         <p style="font-size:13px;color:#888780;line-height:1.7;margin:0;">${summary}</p>
       </div>
     `;
   }).join("");
+
+  const dateStr = today.toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" });
 
   const html = `
     <div style="background:#080810;min-height:100vh;padding:32px 24px;font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
@@ -82,32 +82,32 @@ async function main(): Promise<void> {
         <h1 style="font-size:20px;color:#c8c4ff;margin:0 0 4px;">
           Mirai<span style="color:#7f77dd;">Signal</span>
         </h1>
-        <p style="font-size:12px;color:#5f5e5a;margin:0;">
-          ${today.toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" })}の注目記事
-        </p>
+        <p style="font-size:12px;color:#5f5e5a;margin:0;">${dateStr} の注目記事</p>
       </div>
       <hr style="border:none;border-top:0.5px solid #1e1e30;margin-bottom:24px;" />
       ${articleHtml}
       <hr style="border:none;border-top:0.5px solid #1e1e30;margin-top:24px;margin-bottom:16px;" />
       <p style="font-size:11px;color:#444441;text-align:center;">
-        <a href="https://mirai-signal-web-kzfb.vercel.app" style="color:#534ab7;">Mirai Signal</a> ·
-        配信停止をご希望の場合はこのメールに返信してください
+        <a href="https://mirai-signal-web-kzfb.vercel.app" style="color:#534ab7;">Mirai Signal</a> &middot;
+        購読解除はこのメールに返信してください
       </p>
     </div>
   `;
+
+  const subject = `Mirai Signal - ${dateStr} の注目記事`;
 
   for (const subscriber of subscribers) {
     const { error } = await resend.emails.send({
       from: "Mirai Signal <onboarding@resend.dev>",
       to: subscriber.email,
-      subject: `Mirai Signal - ${today.toLocaleDateString("ja-JP", { month: "long", day: "numeric" })}の注目記事`,
+      subject,
       html,
     });
 
     if (error) {
-      console.error(`送信失敗：${subscriber.email}`, error);
+      console.error(`送信失敗: ${subscriber.email}`, error);
     } else {
-      console.log(`送信成功：${subscriber.email}`);
+      console.log(`送信成功: ${subscriber.email}`);
     }
   }
 }
