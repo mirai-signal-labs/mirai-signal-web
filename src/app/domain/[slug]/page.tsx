@@ -34,6 +34,7 @@ const DOMAINS: Record<string, { label: string; desc: string }> = {
   energy: { label: "Energy", desc: "Fusion / Battery Tech" },
   space: { label: "Space", desc: "SpaceX / Satellite AI" },
   defense: { label: "Defense", desc: "Defense AI / Drone" },
+  other: { label: "Other", desc: "Other Technology" },
 };
 
 const LATEST_LIMIT = 10;
