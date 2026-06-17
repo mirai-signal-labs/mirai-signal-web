@@ -134,7 +134,7 @@ export default async function Home() {
                   <div key={article.id} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '8px 10px', background: '#0e0e1a', border: '0.5px solid #1e1e30', marginBottom: '4px' }}>
                     <span style={{ fontSize: '11px', color: '#26215c', fontWeight: 500, flexShrink: 0, width: '16px' }}>{i + 2}</span>
                     <div>
-                      <Link href={'/article/' + article.id} style={{ fontSize: '11px', color: '#afa9ec', textDecoration: 'none', lineHeight: 1.4, display: 'block', marginBottom: '3px' }}>{article.title}</Link>
+                      <Link href={'/article/' + article.id} style={{ fontSize: '11px', color: '#afa9ec', textDecoration: 'none', lineHeight: 1.4, display: 'block', marginBottom: '3px' }}>{article.title_ja ?? article.title}</Link>
                       <span style={{ fontSize: '10px', color: '#3c3489' }}>{article.source} - {formatDate(article.published_at)}</span>
                     </div>
                   </div>
