@@ -73,7 +73,10 @@ export default async function Home() {
         <div style={{ fontSize: '16px', fontWeight: 600, color: '#c8c4ff', letterSpacing: '0.06em' }}>
           Mirai<span style={{ color: '#7f77dd' }}>Signal</span>
         </div>
-        <Link href='/admin' style={{ fontSize: '11px', color: '#444441', textDecoration: 'none' }}>Admin</Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <a href='https://x.com/MqS_quest' target='_blank' rel='noopener noreferrer' style={{ fontSize: '11px', color: '#7f77dd', textDecoration: 'none' }}>𝕏 フォローする</a>
+          <Link href='/admin' style={{ fontSize: '11px', color: '#444441', textDecoration: 'none' }}>Admin</Link>
+        </div>
       </nav>
 
       <div className='ms-domain-tabs' style={{ overflowX: 'auto', borderBottom: '0.5px solid #1e1e30', background: '#0b0b14' }}>
@@ -90,11 +93,19 @@ export default async function Home() {
             <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.12em', textTransform: 'uppercase', margin: '0 0 6px', fontWeight: 500 }}>Detecting the Signals</p>
             <p style={{ fontSize: '12px', color: '#888780', margin: 0, lineHeight: 1.5 }}>Read the future first</p>
           </div>
-            <div style={{ padding: '14px', borderBottom: '0.5px solid #1e1e30', marginBottom: '8px' }}>
-              <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px', fontWeight: 500 }}>Newsletter</p>
-              <p style={{ fontSize: '11px', color: '#5f5e5a', margin: '0 0 10px', lineHeight: 1.5 }}>毎朝、注目記事をメールで</p>
-              <SubscribeForm />
-            </div>
+
+          <div style={{ padding: '14px', borderBottom: '0.5px solid #1e1e30', marginBottom: '8px' }}>
+            <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px', fontWeight: 500 }}>Newsletter</p>
+            <p style={{ fontSize: '11px', color: '#5f5e5a', margin: '0 0 10px', lineHeight: 1.5 }}>毎朝、注目記事をメールで</p>
+            <SubscribeForm />
+          </div>
+
+          <div style={{ padding: '14px', borderBottom: '0.5px solid #1e1e30', marginBottom: '8px' }}>
+            <a href='https://x.com/MqS_quest' target='_blank' rel='noopener noreferrer' style={{ fontSize: '11px', color: '#7f77dd', textDecoration: 'none' }}>
+              𝕏 で毎日の更新情報をチェック → @MqS_quest
+            </a>
+          </div>
+
           {DOMAINS.map((d) => {
             const totalCount = domainCounts[d.key] || 0;
             return (
@@ -151,7 +162,7 @@ export default async function Home() {
           <div style={{ marginTop: '40px', padding: '24px', background: '#0e0e1a', border: '0.5px solid #1e1e30', borderRadius: '8px' }}>
             <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.1em', textTransform: 'uppercase', margin: '0 0 8px' }}>Newsletter</p>
             <h2 style={{ fontSize: '16px', fontWeight: 500, color: '#e8e6ff', margin: '0 0 6px' }}>毎朝の注目記事を届ける</h2>
-              <p style={{ fontSize: '12px', color: '#5f5e5a', margin: '0 0 16px' }}>海外AI・テクノロジーの最新動向をメールでお届けします</p>
+            <p style={{ fontSize: '12px', color: '#5f5e5a', margin: '0 0 16px' }}>海外AI・テクノロジーの最新動向をメールでお届けします</p>
             <SubscribeForm />
           </div>
         </main>
