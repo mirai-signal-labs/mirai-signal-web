@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { createClient } from "@supabase/supabase-js";
 
 const BASE_URL = "https://mirai-signal-web-kzfb.vercel.app";
 
@@ -10,18 +11,37 @@ const DOMAINS = [
   "energy",
   "space",
   "defense",
+  "other",
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!
+  );
+
+  const { data: articles } = await supabase
+    .from("articles")
+    .select("id, published_at")
+    .eq("status", "approved")
+    .order("published_at", { ascending: false });
+
+  const articlePages = (articles ?? []).map((a) => ({
+    url: BASE_URL + "/article/" + a.id,
+    lastModified: a.published_at ? new Date(a.published_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
   const domainPages = DOMAINS.map((domain) => ({
-    url: `${BASE_URL}/domain/${domain}`,
+    url: BASE_URL + "/domain/" + domain,
     lastModified: new Date(),
     changeFrequency: "daily" as const,
     priority: 0.8,
   }));
 
   const archivePages = DOMAINS.map((domain) => ({
-    url: `${BASE_URL}/domain/${domain}/archive`,
+    url: BASE_URL + "/domain/" + domain + "/archive",
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.5,
@@ -36,5 +56,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     ...domainPages,
     ...archivePages,
+    ...articlePages,
   ];
 }
