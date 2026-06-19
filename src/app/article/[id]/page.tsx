@@ -43,6 +43,7 @@ const DOMAIN_LABELS: Record<string, string> = {
   energy: "Energy",
   space: "Space",
   defense: "Defense",
+  other: "Other",
 };
 
 function formatDate(d: string | null): string {
@@ -67,6 +68,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   if (!article) notFound();
 
   const domainLabel = article.domain ? DOMAIN_LABELS[article.domain] ?? article.domain : null;
+  const title = article.title_ja ?? article.title;
+  const articleUrl = `https://mirai-signal-web-kzfb.vercel.app/article/${id}`;
+  const xShareUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(title + ' | Mirai Signal')}&url=${encodeURIComponent(articleUrl)}&via=MqS_quest`;
 
   return (
     <div style={{ background: "#080810", minHeight: "100vh" }}>
@@ -91,14 +95,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
               {domainLabel}
             </Link>
           )}
-<h1 style={{ fontSize: "22px", fontWeight: 500, color: "#e8e6ff", lineHeight: 1.6, margin: "0 0 8px" }}>
-  {article.title_ja ?? article.title}
-</h1>
-{article.title_ja && (
-  <p style={{ fontSize: "13px", color: "#444441", margin: "0 0 12px", lineHeight: 1.5 }}>
-    {article.title}
-  </p>
-)}
+          <h1 style={{ fontSize: "22px", fontWeight: 500, color: "#e8e6ff", lineHeight: 1.6, margin: "0 0 8px" }}>
+            {article.title_ja ?? article.title}
+          </h1>
+          {article.title_ja && (
+            <p style={{ fontSize: "13px", color: "#444441", margin: "0 0 12px", lineHeight: 1.5 }}>
+              {article.title}
+            </p>
+          )}
           <div style={{ display: "flex", gap: "12px", fontSize: "12px", color: "#3c3489", alignItems: "center" }}>
             <span style={{ background: "#0e0e1a", border: "0.5px solid #1e1e30", padding: "2px 10px", borderRadius: "4px" }}>{article.source ?? "-"}</span>
             <span>{formatDate(article.published_at)}</span>
@@ -132,9 +136,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
         <hr style={{ border: "none", borderTop: "0.5px solid #1e1e30", marginBottom: "24px" }} />
 
-        <a href={article.url} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "#7f77dd", border: "0.5px solid #534ab7", padding: "10px 24px", borderRadius: "20px", textDecoration: "none" }}>
-          元記事を読む
-        </a>
+        <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+          <a href={article.url} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "#7f77dd", border: "0.5px solid #534ab7", padding: "10px 24px", borderRadius: "20px", textDecoration: "none" }}>
+            元記事を読む
+          </a>
+          <a href={xShareUrl} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "#afa9ec", border: "0.5px solid #1e1e30", padding: "10px 24px", borderRadius: "20px", textDecoration: "none" }}>
+            𝕏 でシェア
+          </a>
+        </div>
       </main>
     </div>
   );
