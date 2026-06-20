@@ -74,7 +74,7 @@ export default async function Home() {
           Mirai<span style={{ color: '#7f77dd' }}>Signal</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <a href='https://x.com/MqS_quest' target='_blank' rel='noopener noreferrer' style={{ fontSize: '11px', color: '#7f77dd', textDecoration: 'none' }}>𝕏 フォローする</a>
+          <a href='https://x.com/MqS_quest' target='_blank' rel='noopener noreferrer' style={{ fontSize: '11px', color: '#7f77dd', textDecoration: 'none', whiteSpace: 'nowrap' }}>X フォローする</a>
           <Link href='/admin' style={{ fontSize: '11px', color: '#444441', textDecoration: 'none' }}>Admin</Link>
         </div>
       </nav>
@@ -91,18 +91,18 @@ export default async function Home() {
         <aside className='ms-sidebar' style={{ background: '#0b0b14', borderRight: '0.5px solid #1e1e30', padding: '20px 0' }}>
           <div style={{ padding: '0 14px 16px', borderBottom: '0.5px solid #1e1e30', marginBottom: '8px' }}>
             <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.12em', textTransform: 'uppercase', margin: '0 0 6px', fontWeight: 500 }}>Detecting the Signals</p>
-            <p style={{ fontSize: '12px', color: '#888780', margin: 0, lineHeight: 1.5 }}>Read the future first</p>
+            <p style={{ fontSize: '12px', color: '#888780', margin: 0, lineHeight: 1.5, whiteSpace: 'nowrap' }}>Read the future first</p>
           </div>
 
           <div style={{ padding: '14px', borderBottom: '0.5px solid #1e1e30', marginBottom: '8px' }}>
             <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px', fontWeight: 500 }}>Newsletter</p>
-            <p style={{ fontSize: '11px', color: '#5f5e5a', margin: '0 0 10px', lineHeight: 1.5 }}>毎朝、注目記事をメールで</p>
+            <p style={{ fontSize: '11px', color: '#5f5e5a', margin: '0 0 10px', whiteSpace: 'nowrap' }}>毎朝、注目記事をメールで</p>
             <SubscribeForm />
           </div>
 
           <div style={{ padding: '14px', borderBottom: '0.5px solid #1e1e30', marginBottom: '8px' }}>
-            <a href='https://x.com/MqS_quest' target='_blank' rel='noopener noreferrer' style={{ fontSize: '11px', color: '#7f77dd', textDecoration: 'none' }}>
-              𝕏 @MqS_quest をフォロー
+            <a href='https://x.com/MqS_quest' target='_blank' rel='noopener noreferrer' style={{ fontSize: '11px', color: '#7f77dd', textDecoration: 'none', whiteSpace: 'nowrap', display: 'block' }}>
+              X @MqS_quest をフォロー
             </a>
           </div>
 
