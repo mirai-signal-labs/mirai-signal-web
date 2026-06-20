@@ -97,7 +97,7 @@ export default async function Home() {
           <div style={{ padding: '14px', borderBottom: '0.5px solid #1e1e30', marginBottom: '8px' }}>
             <p style={{ fontSize: '10px', color: '#534ab7', letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px', fontWeight: 500 }}>Newsletter</p>
             <p style={{ fontSize: '11px', color: '#5f5e5a', margin: '0 0 10px', whiteSpace: 'nowrap' }}>毎朝、注目記事をメールで</p>
-            <SubscribeForm />
+            <SubscribeForm compact={true} />
           </div>
 
           <div style={{ padding: '14px', borderBottom: '0.5px solid #1e1e30', marginBottom: '8px' }}>

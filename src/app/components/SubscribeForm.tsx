@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export default function SubscribeForm() {
+export default function SubscribeForm({ compact = false }: { compact?: boolean }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -27,24 +27,44 @@ export default function SubscribeForm() {
 
   return (
     <div>
-      <div style={{ display: "flex", gap: "8px" }}>
+      <div style={{ display: "flex", flexDirection: compact ? "column" : "row", gap: "8px" }}>
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="your@email.com"
-          style={{ flex: 1, padding: "8px 12px", background: "#080810", border: "0.5px solid #1e1e30", borderRadius: "6px", color: "#afa9ec", fontSize: "13px", outline: "none" }}
+          style={{
+            flex: 1,
+            width: compact ? "100%" : undefined,
+            boxSizing: "border-box",
+            padding: compact ? "6px 8px" : "8px 12px",
+            background: "#080810",
+            border: "0.5px solid #1e1e30",
+            borderRadius: "6px",
+            color: "#afa9ec",
+            fontSize: compact ? "11px" : "13px",
+            outline: "none",
+          }}
         />
         <button
           onClick={handleSubmit}
           disabled={status === "loading"}
-          style={{ padding: "8px 20px", background: "#534ab7", border: "none", borderRadius: "6px", color: "#fff", fontSize: "13px", cursor: "pointer" }}
+          style={{
+            padding: compact ? "6px 0" : "8px 20px",
+            background: "#534ab7",
+            border: "none",
+            borderRadius: "6px",
+            color: "#fff",
+            fontSize: compact ? "11px" : "13px",
+            cursor: "pointer",
+            width: compact ? "100%" : undefined,
+          }}
         >
           {status === "loading" ? "..." : "登録"}
         </button>
       </div>
       {message && (
-        <p style={{ fontSize: "12px", color: status === "success" ? "#1d9e75" : "#993c1d", margin: "8px 0 0" }}>
+        <p style={{ fontSize: "11px", color: status === "success" ? "#1d9e75" : "#993c1d", margin: "8px 0 0" }}>
           {message}
         </p>
       )}
