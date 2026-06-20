@@ -102,7 +102,7 @@ export default async function Home() {
 
           <div style={{ padding: '14px', borderBottom: '0.5px solid #1e1e30', marginBottom: '8px' }}>
             <a href='https://x.com/MqS_quest' target='_blank' rel='noopener noreferrer' style={{ fontSize: '11px', color: '#7f77dd', textDecoration: 'none' }}>
-              𝕏 で毎日の更新情報をチェック → @MqS_quest
+              𝕏 @MqS_quest をフォロー
             </a>
           </div>
 
