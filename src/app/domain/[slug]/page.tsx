@@ -89,7 +89,10 @@ export default async function DomainPage({ params }: { params: Promise<{ slug: s
         <Link href="/" style={{ fontSize: "16px", fontWeight: 600, color: "#c8c4ff", letterSpacing: "0.06em", textDecoration: "none" }}>
           Mirai<span style={{ color: "#7f77dd" }}>Signal</span>
         </Link>
-        <Link href="/admin" style={{ fontSize: "11px", color: "#444441", textDecoration: "none" }}>Admin</Link>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <a href="https://x.com/MqS_quest" target="_blank" rel="noopener noreferrer" style={{ fontSize: "11px", color: "#7f77dd", textDecoration: "none" }}>𝕏 フォローする</a>
+          <Link href="/admin" style={{ fontSize: "11px", color: "#444441", textDecoration: "none" }}>Admin</Link>
+        </div>
       </nav>
 
       <div className="ms-domain-tabs" style={{ overflowX: "auto", borderBottom: "0.5px solid #1e1e30", background: "#0b0b14" }}>
