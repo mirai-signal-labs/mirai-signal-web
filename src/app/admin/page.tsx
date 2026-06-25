@@ -43,7 +43,7 @@ function toJSTDateString(isoString: string): string {
 async function approveArticle(id: string) {
   "use server";
   const supabase = createServerSupabaseClient();
-  await supabase.from("articles").update({ status: "approved" }).eq("id", id);
+  await supabase.from("articles").update({ status: "approved", approved_at: new Date().toISOString() }).eq("id", id);
   revalidatePath("/admin");
 }
 
@@ -51,7 +51,7 @@ async function approveArticle(id: string) {
 async function rejectArticle(id: string) {
   "use server";
   const supabase = createServerSupabaseClient();
-  await supabase.from("articles").update({ status: "rejected" }).eq("id", id);
+  await supabase.from("articles").update({ status: "rejected", approved_at: new Date().toISOString() }).eq("id", id);
   revalidatePath("/admin");
 }
 
@@ -59,7 +59,7 @@ async function rejectArticle(id: string) {
 async function unapproveArticle(id: string) {
   "use server";
   const supabase = createServerSupabaseClient();
-  await supabase.from("articles").update({ status: "translated" }).eq("id", id);
+  await supabase.from("articles").update({ status: "translated", approved_at: null }).eq("id", id);
   revalidatePath("/admin");
 }
 
@@ -157,16 +157,16 @@ export default async function AdminPage({
   // created_at と status だけを取得する（カレンダー用の軽いクエリ）
   const { data: calRaw } = await supabase
     .from("articles")
-    .select("created_at, status")
+    .select("approved_at, status")
     .in("status", ["approved", "rejected"])
-    .gte("created_at", rangeStart)
-    .lte("created_at", rangeEnd);
+    .gte("approved_at", rangeStart)
+    .lte("approved_at", rangeEnd);
 
   // 日付ごとに approved / rejected の件数を集計する
   const calendarData: CalendarData = {};
   for (const row of calRaw ?? []) {
-    if (!row.created_at) continue;
-    const dateKey = toJSTDateString(row.created_at); // "YYYY-MM-DD"
+    if (!row.approved_at) continue;
+    const dateKey = toJSTDateString(row.approved_at); // "YYYY-MM-DD"
     if (!calendarData[dateKey]) {
       calendarData[dateKey] = { approved: 0, rejected: 0 };
     }
