@@ -7,7 +7,6 @@ const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -18,7 +17,7 @@ export const metadata: Metadata = {
     default: "Mirai Signal",
     template: "%s | Mirai Signal",
   },
-  description: "海外AI・ロボティクス・半導体・宇宙などの最先端技術情報を毎日日本語で届ける情報インテリジェンスプラットフォーム。英語圏の一次情報をAIで収集・分析・翻訳。",
+  description: "海外AI・ロボティクス・半導体・宇宙などの最先端技術情報を毎日日本語で届ける情報インテリジェンスプラットフォーム。英語圈の一次情報をAIで収集・分析・翻訳。",
   keywords: ["AI", "ロボティクス", "半導体", "宇宙", "テクノロジー", "技術情報", "海外AI", "LLM", "AGI"],
   authors: [{ name: "Mirai Signal" }],
   creator: "Mirai Signal",
@@ -51,7 +50,31 @@ export default function RootLayout({
       lang="ja"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <footer style={{
+          borderTop: "0.5px solid var(--ms-border)",
+          padding: "24px",
+          textAlign: "center",
+          display: "flex",
+          justifyContent: "center",
+          gap: "24px",
+          flexWrap: "wrap",
+        }}>
+          <a href="/privacy" style={{ fontSize: "12px", color: "var(--ms-text-muted)", textDecoration: "none" }}>
+            プライバシーポリシー
+          </a>
+          <a href="/terms" style={{ fontSize: "12px", color: "var(--ms-text-muted)", textDecoration: "none" }}>
+            利用規約
+          </a>
+          <a href="https://forms.gle/hZoQHXuBckkrToMo7" target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "var(--ms-text-muted)", textDecoration: "none" }}>
+            お問い合わせ
+          </a>
+          <span style={{ fontSize: "12px", color: "var(--ms-text-muted)" }}>
+            © 2026 Mirai Signal
+          </span>
+        </footer>
+      </body>
       <GoogleAnalytics gaId="G-Q0Q9JC6RHS" />
     </html>
   );
