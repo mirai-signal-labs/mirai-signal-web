@@ -49,7 +49,7 @@ async function main(): Promise<void> {
 
   const { data: subscribers } = await supabase
     .from("subscribers")
-    .select("email")
+    .select("email, unsubscribe_token")
     .eq("active", true);
 
   if (!subscribers?.length) {
@@ -74,26 +74,31 @@ async function main(): Promise<void> {
   }).join("");
 
   const dateStr = today.toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" });
-
-  const html = [
-    '<div style="background:#080810;padding:28px 20px;font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">',
-    '<div style="margin-bottom:20px;">',
-    '<h1 style="font-size:20px;color:#c8c4ff;margin:0 0 4px;">Mirai<span style="color:#7f77dd;">Signal</span></h1>',
-    '<p style="font-size:12px;color:#5f5e5a;margin:0;">' + dateStr + ' の注目記事</p>',
-    '</div>',
-    '<hr style="border:none;border-top:0.5px solid #1e1e30;margin-bottom:20px;" />',
-    articleHtml,
-    '<hr style="border:none;border-top:0.5px solid #1e1e30;margin-top:8px;margin-bottom:14px;" />',
-    '<p style="font-size:11px;color:#444441;text-align:center;margin:0;">',
-    '<a href="https://mirai-signal-web-kzfb.vercel.app" style="color:#534ab7;">Mirai Signal</a>',
-    ' &middot; 購読解除はこのメールに返信してください',
-    '</p>',
-    '</div>',
-  ].join('');
-
   const subject = "Mirai Signal - " + dateStr + " の注目記事";
 
   for (const subscriber of subscribers) {
+    // 購読解除リンクをトークンごとに生成
+    const unsubscribeUrl = subscriber.unsubscribe_token
+      ? "https://mirai-signal-web-kzfb.vercel.app/unsubscribe?token=" + subscriber.unsubscribe_token
+      : "https://mirai-signal-web-kzfb.vercel.app/unsubscribe";
+
+    const html = [
+      '<div style="background:#080810;padding:28px 20px;font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">',
+      '<div style="margin-bottom:20px;">',
+      '<h1 style="font-size:20px;color:#c8c4ff;margin:0 0 4px;">Mirai<span style="color:#7f77dd;">Signal</span></h1>',
+      '<p style="font-size:12px;color:#5f5e5a;margin:0;">' + dateStr + ' の注目記事</p>',
+      '</div>',
+      '<hr style="border:none;border-top:0.5px solid #1e1e30;margin-bottom:20px;" />',
+      articleHtml,
+      '<hr style="border:none;border-top:0.5px solid #1e1e30;margin-top:8px;margin-bottom:14px;" />',
+      '<p style="font-size:11px;color:#444441;text-align:center;margin:0;">',
+      '<a href="https://mirai-signal-web-kzfb.vercel.app" style="color:#534ab7;">Mirai Signal</a>',
+      ' &middot; ',
+      '<a href="' + unsubscribeUrl + '" style="color:#444441;">購読解除</a>',
+      '</p>',
+      '</div>',
+    ].join('');
+
     const { error } = await resend.emails.send({
       from: "Mirai Signal <onboarding@resend.dev>",
       to: subscriber.email,
