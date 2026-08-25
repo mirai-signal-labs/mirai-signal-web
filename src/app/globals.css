@@ -1,21 +1,105 @@
 ﻿@import "tailwindcss";
 
+/* ============================================================
+   Mirai Signal — Design Tokens
+   Dark = default. Light = [data-theme="light"].
+   Token names describe ROLE, not brightness.
+   ============================================================ */
+
 :root {
+  color-scheme: dark;
+
+  /* --- Surfaces --- */
   --ms-bg: #080810;
+  --ms-bg-subtle: #0a0a14;
+  --ms-bg-sidebar: #0b0b14;
   --ms-bg-card: #0e0e1a;
+  --ms-bg-tag: #12121e;
+  --ms-bg-elevated: #14142a;
   --ms-bg-nav: #080810;
+
+  /* --- Borders --- */
   --ms-border: #1e1e30;
   --ms-border-nav: #1a1a28;
+  --ms-border-soft: #2a2a40;
+  --ms-border-input: #555555;
+
+  /* --- Accent --- */
   --ms-accent: #534ab7;
-  --ms-accent-light: #7f77dd;
-  --ms-accent-dim: #1a1830;
-  --ms-text-primary: #afa9ec;
+  --ms-accent-strong: #7f77dd;   /* was #7f77dd — emphasis, NOT "lighter" */
+  --ms-accent-dim: #1a1830;      /* highlight background */
+  --ms-accent-border: #26215c;
+  --ms-on-accent: #ffffff;       /* text on accent-filled buttons */
+
+  /* --- Text (strong -> faint) --- */
+  --ms-text-strong: #e8e6ff;     /* h1 / h2 */
+  --ms-text-link: #cecbf6;
+  --ms-text-heading: #c8c4ff;    /* card titles */
+  --ms-text-primary: #afa9ec;    /* body */
+  --ms-text-meta: #a0a0c0;
+  --ms-text-tertiary: #888780;
   --ms-text-secondary: #5f5e5a;
-  --ms-text-muted: #3c3489;
+  --ms-text-label: #444441;      /* small labels, sub-links */
+  --ms-text-muted: #3c3489;      /* footer links */
+  --ms-text-disabled: #2c2c2a;
+  --ms-text-button-muted: #999999;
+
+  /* --- Status --- */
   --ms-green: #1d9e75;
   --ms-green-border: #0f6e56;
+  --ms-green-bg: #0a1f18;
   --ms-red: #993c1d;
   --ms-red-border: #712b13;
+  --ms-red-bg: #1f0a0a;
+  --ms-error: #e05a5a;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* --- Surfaces --- */
+  --ms-bg: #f7f7fb;
+  --ms-bg-subtle: #f2f2f8;
+  --ms-bg-sidebar: #f0f0f7;
+  --ms-bg-card: #ffffff;
+  --ms-bg-tag: #eeeef6;
+  --ms-bg-elevated: #e7e5f7;
+  --ms-bg-nav: #ffffff;
+
+  /* --- Borders --- */
+  --ms-border: #e0e0ea;
+  --ms-border-nav: #e6e6ee;
+  --ms-border-soft: #d6d6e4;
+  --ms-border-input: #c4c4d0;
+
+  /* --- Accent --- */
+  --ms-accent: #4a41ab;
+  --ms-accent-strong: #3b338f;   /* emphasis = darker on light */
+  --ms-accent-dim: #eae8f8;
+  --ms-accent-border: #c9c5ea;
+  --ms-on-accent: #ffffff;
+
+  /* --- Text (strong -> faint) --- */
+  --ms-text-strong: #14141f;
+  --ms-text-link: #3b3390;
+  --ms-text-heading: #2a2470;
+  --ms-text-primary: #33334a;
+  --ms-text-meta: #6b6b80;
+  --ms-text-tertiary: #74736c;
+  --ms-text-secondary: #6e6d68;
+  --ms-text-label: #6f6f68;
+  --ms-text-muted: #7a76a8;
+  --ms-text-disabled: #c2c2bd;
+  --ms-text-button-muted: #767676;
+
+  /* --- Status --- */
+  --ms-green: #157f5d;
+  --ms-green-border: #a8ddc9;
+  --ms-green-bg: #e8f6f1;
+  --ms-red: #a8471f;
+  --ms-red-border: #edc4b4;
+  --ms-red-bg: #fbeee8;
+  --ms-error: #c23b3b;
 }
 
 body {

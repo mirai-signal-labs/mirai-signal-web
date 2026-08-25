@@ -9,8 +9,8 @@ export default function PrivacyPage() {
   return (
     <div style={{ background: "var(--ms-bg)", minHeight: "100vh" }}>
       <nav style={{ background: "var(--ms-bg-nav)", borderBottom: "0.5px solid var(--ms-border-nav)", padding: "14px 24px" }}>
-        <a href="/" style={{ fontSize: "15px", fontWeight: 500, color: "#c8c4ff", textDecoration: "none", letterSpacing: "0.06em" }}>
-          Mirai<span style={{ color: "var(--ms-accent-light)" }}>Signal</span>
+        <a href="/" style={{ fontSize: "15px", fontWeight: 500, color: "var(--ms-text-heading)", textDecoration: "none", letterSpacing: "0.06em" }}>
+          Mirai<span style={{ color: "var(--ms-accent-strong)" }}>Signal</span>
         </a>
       </nav>
       <main style={{ maxWidth: "720px", margin: "0 auto", padding: "48px 24px" }}>
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
           <section>
             <h2 style={{ fontSize: "16px", fontWeight: 500, color: "var(--ms-text-primary)", marginBottom: "12px" }}>運営者</h2>
             <p>Mirai Signal（運営者：MqS）</p>
-            <p>お問い合わせ：<a href="https://forms.gle/hZoQHXuBckkrToMo7" target="_blank" rel="noopener noreferrer" style={{ color: "var(--ms-accent-light)" }}>コンタクトフォーム</a></p>
+            <p>お問い合わせ：<a href="https://forms.gle/hZoQHXuBckkrToMo7" target="_blank" rel="noopener noreferrer" style={{ color: "var(--ms-accent-strong)" }}>コンタクトフォーム</a></p>
           </section>
 
           <section>
@@ -36,8 +36,8 @@ export default function PrivacyPage() {
 
           <section>
             <h2 style={{ fontSize: "16px", fontWeight: 500, color: "var(--ms-text-primary)", marginBottom: "12px" }}>Google Analyticsについて</h2>
-            <p>当サイトはGoogle LLCの提供するGoogle Analyticsを利用しています。Google AnalyticsはCookieを使用してアクセス情報を収集します。収集される情報については、<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "var(--ms-accent-light)" }}>Googleのプライバシーポリシー</a>をご確認ください。</p>
-            <p style={{ marginTop: "8px" }}>Google Analyticsのオプトアウトは<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" style={{ color: "var(--ms-accent-light)" }}>Google Analyticsオプトアウトアドオン</a>から行えます。</p>
+            <p>当サイトはGoogle LLCの提供するGoogle Analyticsを利用しています。Google AnalyticsはCookieを使用してアクセス情報を収集します。収集される情報については、<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "var(--ms-accent-strong)" }}>Googleのプライバシーポリシー</a>をご確認ください。</p>
+            <p style={{ marginTop: "8px" }}>Google Analyticsのオプトアウトは<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" style={{ color: "var(--ms-accent-strong)" }}>Google Analyticsオプトアウトアドオン</a>から行えます。</p>
           </section>
 
           <section>

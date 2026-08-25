@@ -12,12 +12,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Runs before first paint. Stored choice wins; otherwise follow the OS.
+const themeScript = `
+(function () {
+  try {
+    var stored = localStorage.getItem("ms-theme");
+    var theme = stored === "light" || stored === "dark"
+      ? stored
+      : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+})();
+`;
+
 export const metadata: Metadata = {
   title: {
     default: "Mirai Signal",
     template: "%s | Mirai Signal",
   },
-  description: "海外AI・ロボティクス・半導体・宇宙などの最先端技術情報を毎日日本語で届ける情報インテリジェンスプラットフォーム。英語圈の一次情報をAIで収集・分析・翻訳。",
+  description: "海外AI・ロボティクス・半導体・宇宙などの最先端技術情報を毎日日本語で届ける情報インテリジェンスプラットフォーム。英語圏の一次情報をAIで収集・分析・翻訳。",
   keywords: ["AI", "ロボティクス", "半導体", "宇宙", "テクノロジー", "技術情報", "海外AI", "LLM", "AGI"],
   authors: [{ name: "Mirai Signal" }],
   creator: "Mirai Signal",
@@ -48,8 +63,12 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="min-h-full flex flex-col">
         {children}
         <footer style={{

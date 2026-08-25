@@ -9,8 +9,8 @@ export default function TermsPage() {
   return (
     <div style={{ background: "var(--ms-bg)", minHeight: "100vh" }}>
       <nav style={{ background: "var(--ms-bg-nav)", borderBottom: "0.5px solid var(--ms-border-nav)", padding: "14px 24px" }}>
-        <a href="/" style={{ fontSize: "15px", fontWeight: 500, color: "#c8c4ff", textDecoration: "none", letterSpacing: "0.06em" }}>
-          Mirai<span style={{ color: "var(--ms-accent-light)" }}>Signal</span>
+        <a href="/" style={{ fontSize: "15px", fontWeight: 500, color: "var(--ms-text-heading)", textDecoration: "none", letterSpacing: "0.06em" }}>
+          Mirai<span style={{ color: "var(--ms-accent-strong)" }}>Signal</span>
         </a>
       </nav>
       <main style={{ maxWidth: "720px", margin: "0 auto", padding: "48px 24px" }}>

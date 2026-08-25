@@ -100,17 +100,17 @@ export default async function AdminPage({
     return (
       <div style={{ background: "var(--ms-bg)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ background: "var(--ms-bg-card)", border: "0.5px solid var(--ms-border)", borderRadius: "12px", padding: "32px", width: "320px" }}>
-          <div style={{ fontSize: "15px", fontWeight: 500, color: "#c8c4ff", marginBottom: "24px", textAlign: "center" }}>
-            Mirai<span style={{ color: "var(--ms-accent-light)" }}>Signal</span> Admin
+          <div style={{ fontSize: "15px", fontWeight: 500, color: "var(--ms-text-heading)", marginBottom: "24px", textAlign: "center" }}>
+            Mirai<span style={{ color: "var(--ms-accent-strong)" }}>Signal</span> Admin
           </div>
           <form action={login}>
             <input
               type="password"
               name="password"
               placeholder="パスワード"
-              style={{ width: "100%", padding: "10px 12px", background: "#0e0e1a", border: "0.5px solid var(--ms-border)", borderRadius: "6px", color: "var(--ms-text-primary)", fontSize: "14px", marginBottom: "12px", boxSizing: "border-box" }}
+              style={{ width: "100%", padding: "10px 12px", background: "var(--ms-bg-card)", border: "0.5px solid var(--ms-border)", borderRadius: "6px", color: "var(--ms-text-primary)", fontSize: "14px", marginBottom: "12px", boxSizing: "border-box" }}
             />
-            <button type="submit" style={{ width: "100%", padding: "10px", background: "var(--ms-accent)", border: "none", borderRadius: "6px", color: "#fff", fontSize: "14px", cursor: "pointer" }}>
+            <button type="submit" style={{ width: "100%", padding: "10px", background: "var(--ms-accent)", border: "none", borderRadius: "6px", color: "var(--ms-on-accent)", fontSize: "14px", cursor: "pointer" }}>
               ログイン
             </button>
           </form>
@@ -194,9 +194,9 @@ export default async function AdminPage({
   const items = (articles ?? []) as Article[];
 
   const tabs = [
-    { key: "pending",  label: "承認待ち", color: "var(--ms-accent-light)" },
-    { key: "approved", label: "承認済み", color: "#1d9e75" },
-    { key: "rejected", label: "却下済み", color: "#e05a5a" },
+    { key: "pending",  label: "承認待ち", color: "var(--ms-accent-strong)" },
+    { key: "approved", label: "承認済み", color: "var(--ms-green)" },
+    { key: "rejected", label: "却下済み", color: "var(--ms-error)" },
   ];
 
   // 曜日ヘッダー
@@ -218,8 +218,8 @@ export default async function AdminPage({
   return (
     <div style={{ background: "var(--ms-bg)", minHeight: "100vh" }}>
       <nav style={{ background: "var(--ms-bg-nav)", borderBottom: "0.5px solid var(--ms-border-nav)", padding: "14px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ fontSize: "15px", fontWeight: 500, color: "#c8c4ff", letterSpacing: "0.06em" }}>
-          Mirai<span style={{ color: "var(--ms-accent-light)" }}>Signal</span>
+        <div style={{ fontSize: "15px", fontWeight: 500, color: "var(--ms-text-heading)", letterSpacing: "0.06em" }}>
+          Mirai<span style={{ color: "var(--ms-accent-strong)" }}>Signal</span>
           <span style={{ fontSize: "11px", color: "var(--ms-accent)", marginLeft: "10px" }}>ADMIN</span>
         </div>
         <form action={logout}>
@@ -260,12 +260,12 @@ export default async function AdminPage({
 
           {/* 凡例 */}
           <div style={{ display: "flex", gap: "16px", marginBottom: "12px", justifyContent: "flex-end" }}>
-            <span style={{ fontSize: "11px", color: "#1d9e75", display: "flex", alignItems: "center", gap: "4px" }}>
-              <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#1d9e75", display: "inline-block" }} />
+            <span style={{ fontSize: "11px", color: "var(--ms-green)", display: "flex", alignItems: "center", gap: "4px" }}>
+              <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--ms-green)", display: "inline-block" }} />
               承認
             </span>
-            <span style={{ fontSize: "11px", color: "#e05a5a", display: "flex", alignItems: "center", gap: "4px" }}>
-              <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#e05a5a", display: "inline-block" }} />
+            <span style={{ fontSize: "11px", color: "var(--ms-error)", display: "flex", alignItems: "center", gap: "4px" }}>
+              <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--ms-error)", display: "inline-block" }} />
               却下
             </span>
           </div>
@@ -278,7 +278,7 @@ export default async function AdminPage({
                 style={{
                   textAlign: "center",
                   fontSize: "10px",
-                  color: i === 0 ? "#e05a5a" : i === 6 ? "#7f77dd" : "var(--ms-text-secondary)",
+                  color: i === 0 ? "var(--ms-error)" : i === 6 ? "var(--ms-accent-strong)" : "var(--ms-text-secondary)",
                   padding: "4px 0",
                   fontWeight: 500,
                 }}
@@ -306,7 +306,7 @@ export default async function AdminPage({
                 <div
                   key={dateKey}
                   style={{
-                    background: isToday ? "var(--ms-accent-dim)" : "#0a0a14",
+                    background: isToday ? "var(--ms-accent-dim)" : "var(--ms-bg-subtle)",
                     border: isToday ? "0.5px solid var(--ms-accent)" : "0.5px solid var(--ms-border)",
                     borderRadius: "6px",
                     padding: "6px 4px",
@@ -321,7 +321,7 @@ export default async function AdminPage({
                   <span style={{
                     fontSize: "11px",
                     fontWeight: isToday ? 600 : 400,
-                    color: dayOfWeek === 0 ? "#e05a5a" : dayOfWeek === 6 ? "#7f77dd" : isToday ? "var(--ms-accent-light)" : "var(--ms-text-secondary)",
+                    color: dayOfWeek === 0 ? "var(--ms-error)" : dayOfWeek === 6 ? "var(--ms-accent-strong)" : isToday ? "var(--ms-accent-strong)" : "var(--ms-text-secondary)",
                   }}>
                     {cell.day}
                   </span>
@@ -332,8 +332,8 @@ export default async function AdminPage({
                       {stats.approved > 0 && (
                         <span style={{
                           fontSize: "10px",
-                          color: "#1d9e75",
-                          background: "#0a1f18",
+                          color: "var(--ms-green)",
+                          background: "var(--ms-green-bg)",
                           borderRadius: "3px",
                           padding: "1px 5px",
                           lineHeight: 1.4,
@@ -344,8 +344,8 @@ export default async function AdminPage({
                       {stats.rejected > 0 && (
                         <span style={{
                           fontSize: "10px",
-                          color: "#e05a5a",
-                          background: "#1f0a0a",
+                          color: "var(--ms-error)",
+                          background: "var(--ms-red-bg)",
                           borderRadius: "3px",
                           padding: "1px 5px",
                           lineHeight: 1.4,
@@ -399,19 +399,19 @@ export default async function AdminPage({
                 background: "var(--ms-bg-card)",
                 border: "0.5px solid var(--ms-border)",
                 borderLeft: `2px solid ${
-                  tab === "approved" ? "#1d9e75" :
-                  tab === "rejected" ? "#e05a5a" :
+                  tab === "approved" ? "var(--ms-green)" :
+                  tab === "rejected" ? "var(--ms-error)" :
                   "var(--ms-accent)"
                 }`,
                 borderRadius: "0 8px 8px 0",
                 padding: "18px"
               }}>
                 <div style={{ display: "flex", gap: "8px", marginBottom: "10px", alignItems: "center", flexWrap: "wrap" }}>
-                  <span style={{ fontSize: "10px", color: "var(--ms-accent-light)", background: "var(--ms-accent-dim)", padding: "2px 8px", borderRadius: "20px" }}>
+                  <span style={{ fontSize: "10px", color: "var(--ms-accent-strong)", background: "var(--ms-accent-dim)", padding: "2px 8px", borderRadius: "20px" }}>
                     {article.source ?? "-"}
                   </span>
                   {article.domain && (
-                    <span style={{ fontSize: "10px", color: "#a0a0c0", background: "#12121e", padding: "2px 8px", borderRadius: "20px", border: "0.5px solid #2a2a40" }}>
+                    <span style={{ fontSize: "10px", color: "var(--ms-text-meta)", background: "var(--ms-bg-tag)", padding: "2px 8px", borderRadius: "20px", border: "0.5px solid var(--ms-border-soft)" }}>
                       {article.domain.toUpperCase()}
                     </span>
                   )}
@@ -422,11 +422,11 @@ export default async function AdminPage({
                     <span style={{
                       marginLeft: "auto",
                       fontSize: "11px",
-                      color: article.score >= 40 ? "#1d9e75" : article.score >= 30 ? "#7f77dd" : "#888780",
-                      background: "#0e0e1a",
+                      color: article.score >= 40 ? "var(--ms-green)" : article.score >= 30 ? "var(--ms-accent-strong)" : "var(--ms-text-tertiary)",
+                      background: "var(--ms-bg-card)",
                       padding: "2px 8px",
                       borderRadius: "4px",
-                      border: "0.5px solid #1e1e30"
+                      border: "0.5px solid var(--ms-border)"
                     }}>
                       {article.score}/50
                     </span>
@@ -461,7 +461,7 @@ export default async function AdminPage({
 
                   {tab === "approved" && (
                     <form action={unapproveArticle.bind(null, article.id)}>
-                      <button type="submit" style={{ fontSize: "11px", padding: "4px 14px", borderRadius: "4px", border: "0.5px solid #555", color: "#999", background: "transparent", cursor: "pointer" }}>
+                      <button type="submit" style={{ fontSize: "11px", padding: "4px 14px", borderRadius: "4px", border: "0.5px solid var(--ms-border-input)", color: "var(--ms-text-button-muted)", background: "transparent", cursor: "pointer" }}>
                         承認取り消し
                       </button>
                     </form>
@@ -469,7 +469,7 @@ export default async function AdminPage({
 
                   {tab === "rejected" && (
                     <form action={restoreArticle.bind(null, article.id)}>
-                      <button type="submit" style={{ fontSize: "11px", padding: "4px 14px", borderRadius: "4px", border: "0.5px solid var(--ms-accent)", color: "var(--ms-accent-light)", background: "transparent", cursor: "pointer" }}>
+                      <button type="submit" style={{ fontSize: "11px", padding: "4px 14px", borderRadius: "4px", border: "0.5px solid var(--ms-accent)", color: "var(--ms-accent-strong)", background: "transparent", cursor: "pointer" }}>
                         再審査
                       </button>
                     </form>

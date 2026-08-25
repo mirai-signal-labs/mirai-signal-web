@@ -35,12 +35,12 @@ export default async function ApprovedPage() {
   return (
     <div style={{ background: "var(--ms-bg)", minHeight: "100vh" }}>
       <nav style={{ background: "var(--ms-bg-nav)", borderBottom: "0.5px solid var(--ms-border-nav)", padding: "14px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ fontSize: "15px", fontWeight: 500, color: "#c8c4ff", letterSpacing: "0.06em" }}>
-          Mirai<span style={{ color: "var(--ms-accent-light)" }}>Signal</span>
+        <div style={{ fontSize: "15px", fontWeight: 500, color: "var(--ms-text-heading)", letterSpacing: "0.06em" }}>
+          Mirai<span style={{ color: "var(--ms-accent-strong)" }}>Signal</span>
         </div>
         <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
           <Link href="/" style={{ fontSize: "12px", color: "var(--ms-text-secondary)", textDecoration: "none" }}>承認待ち</Link>
-          <span style={{ fontSize: "12px", color: "var(--ms-accent-light)", borderBottom: "1px solid var(--ms-accent)", paddingBottom: "2px" }}>承認済み</span>
+          <span style={{ fontSize: "12px", color: "var(--ms-accent-strong)", borderBottom: "1px solid var(--ms-accent)", paddingBottom: "2px" }}>承認済み</span>
         </div>
       </nav>
 
@@ -49,7 +49,7 @@ export default async function ApprovedPage() {
           <p style={{ fontSize: "11px", color: "var(--ms-accent)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "6px" }}>
             Approved Articles
           </p>
-          <h1 style={{ fontSize: "22px", fontWeight: 500, color: "#e8e6ff", margin: "0 0 6px" }}>
+          <h1 style={{ fontSize: "22px", fontWeight: 500, color: "var(--ms-text-strong)", margin: "0 0 6px" }}>
             承認済み記事
           </h1>
           <p style={{ fontSize: "13px", color: "var(--ms-text-secondary)", margin: 0 }}>
@@ -66,7 +66,7 @@ export default async function ApprovedPage() {
             {items.map((article) => (
               <li key={article.id} style={{ background: "var(--ms-bg-card)", border: "0.5px solid var(--ms-border)", borderLeft: "2px solid var(--ms-accent)", borderRadius: "0 8px 8px 0", padding: "18px" }}>
                 <div style={{ display: "flex", gap: "8px", marginBottom: "10px", alignItems: "center" }}>
-                  <span style={{ fontSize: "10px", color: "var(--ms-accent-light)", background: "var(--ms-accent-dim)", padding: "2px 8px", borderRadius: "20px" }}>
+                  <span style={{ fontSize: "10px", color: "var(--ms-accent-strong)", background: "var(--ms-accent-dim)", padding: "2px 8px", borderRadius: "20px" }}>
                     {article.source ?? "-"}
                   </span>
                   <span style={{ fontSize: "11px", color: "var(--ms-text-muted)" }}>

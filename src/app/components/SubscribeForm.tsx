@@ -38,10 +38,10 @@ export default function SubscribeForm({ compact = false }: { compact?: boolean }
             width: compact ? "100%" : undefined,
             boxSizing: "border-box",
             padding: compact ? "6px 8px" : "8px 12px",
-            background: "#080810",
-            border: "0.5px solid #1e1e30",
+            background: "var(--ms-bg)",
+            border: "0.5px solid var(--ms-border)",
             borderRadius: "6px",
-            color: "#afa9ec",
+            color: "var(--ms-text-primary)",
             fontSize: compact ? "11px" : "13px",
             outline: "none",
           }}
@@ -51,10 +51,10 @@ export default function SubscribeForm({ compact = false }: { compact?: boolean }
           disabled={status === "loading"}
           style={{
             padding: compact ? "6px 0" : "8px 20px",
-            background: "#534ab7",
+            background: "var(--ms-accent)",
             border: "none",
             borderRadius: "6px",
-            color: "#fff",
+            color: "var(--ms-on-accent)",
             fontSize: compact ? "11px" : "13px",
             cursor: "pointer",
             width: compact ? "100%" : undefined,
@@ -64,7 +64,7 @@ export default function SubscribeForm({ compact = false }: { compact?: boolean }
         </button>
       </div>
       {message && (
-        <p style={{ fontSize: "11px", color: status === "success" ? "#1d9e75" : "#993c1d", margin: "8px 0 0" }}>
+        <p style={{ fontSize: "11px", color: status === "success" ? "var(--ms-green)" : "var(--ms-red)", margin: "8px 0 0" }}>
           {message}
         </p>
       )}
