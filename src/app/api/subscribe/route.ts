@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 
 export async function POST(request: NextRequest) {
   const { email } = await request.json();
@@ -13,9 +14,11 @@ export async function POST(request: NextRequest) {
     process.env.SUPABASE_ANON_KEY!
   );
 
+  const unsubscribeToken = randomUUID();
+
   const { error } = await supabase
     .from("subscribers")
-    .insert({ email });
+    .insert({ email, unsubscribe_token: unsubscribeToken });
 
   if (error) {
     if (error.code === "23505") {

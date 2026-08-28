@@ -86,6 +86,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
             </Link>
           )}
           <Link href="/" style={{ fontSize: "11px", color: "var(--ms-text-label)", textDecoration: "none" }}>Top</Link>
+          <ThemeToggle />
         </div>
       </nav>
 
