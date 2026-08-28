@@ -1,79 +1,194 @@
-﻿import { config } from 'dotenv';
-config({ path: '.env.local' });
-import { createClient } from '@supabase/supabase-js';
-import Parser from 'rss-parser';
+﻿const fs = require('fs');
+const path = require('path');
 
-const SOURCES = [
-  { name: 'hackernews', url: 'https://news.ycombinator.com/rss', source: 'hackernews' },
-  { name: 'techcrunch', url: 'https://techcrunch.com/category/artificial-intelligence/feed/', source: 'techcrunch' },
-  { name: 'arxiv', url: 'https://arxiv.org/rss/cs.AI', source: 'arxiv' },
-  { name: 'ieee_spectrum', url: 'https://spectrum.ieee.org/feeds/feed.rss', source: 'ieee_spectrum' },
-  { name: 'mit_tech_review', url: 'https://www.technologyreview.com/feed/', source: 'mit_tech_review' },
-  { name: 'spacenews', url: 'https://spacenews.com/feed/', source: 'spacenews' },
-  { name: 'nature_biotech', url: 'https://www.nature.com/subjects/biotechnology.rss', source: 'nature_biotech' },
-  { name: 'defense_one', url: 'https://www.defenseone.com/rss/all/', source: 'defense_one' },
-  { name: 'robot_report', url: 'https://www.therobotreport.com/feed/', source: 'robot_report' },
-  { name: 'electrek', url: 'https://electrek.co/feed/', source: 'electrek' },
-{ name: 'techcrunch_startups', url: 'https://techcrunch.com/category/startups/feed/', source: 'techcrunch_startups' },
-  { name: 'venturebeat', url: 'https://venturebeat.com/feed/', source: 'venturebeat' },
-] as const;
+const target = path.join("scripts", "save-articles.ts");
 
-const MAX_ITEMS_PER_SOURCE = 10;
-const FETCH_TIMEOUT_MS = 15000;
+const lines = [
+  "import { config } from 'dotenv';",
+  "config({ path: '.env.local' });",
+  "import { createClient, SupabaseClient } from '@supabase/supabase-js';",
+  "import Parser from 'rss-parser';",
+  "",
+  "const SOURCES = [",
+  "  { name: 'hackernews', url: 'https://news.ycombinator.com/rss', source: 'hackernews' },",
+  "  { name: 'techcrunch', url: 'https://techcrunch.com/category/artificial-intelligence/feed/', source: 'techcrunch' },",
+  "  { name: 'arxiv', url: 'https://arxiv.org/rss/cs.AI', source: 'arxiv' },",
+  "  { name: 'ieee_spectrum', url: 'https://spectrum.ieee.org/feeds/feed.rss', source: 'ieee_spectrum' },",
+  "  { name: 'mit_tech_review', url: 'https://www.technologyreview.com/feed/', source: 'mit_tech_review' },",
+  "  { name: 'spacenews', url: 'https://spacenews.com/feed/', source: 'spacenews' },",
+  "  { name: 'nature_biotech', url: 'https://www.nature.com/subjects/biotechnology.rss', source: 'nature_biotech' },",
+  "  { name: 'defense_one', url: 'https://www.defenseone.com/rss/all/', source: 'defense_one' },",
+  "  { name: 'robot_report', url: 'https://www.therobotreport.com/feed/', source: 'robot_report' },",
+  "  { name: 'electrek', url: 'https://electrek.co/feed/', source: 'electrek' },",
+  "  { name: 'techcrunch_startups', url: 'https://techcrunch.com/category/startups/feed/', source: 'techcrunch_startups' },",
+  "  { name: 'venturebeat', url: 'https://venturebeat.com/feed/', source: 'venturebeat' },",
+  "] as const;",
+  "",
+  "const MAX_ITEMS_PER_SOURCE = 10;",
+  "const FETCH_TIMEOUT_MS = 15000;",
+  "const SUPABASE_TIMEOUT_MS = 10000;",
+  "const MAX_RETRIES = 3;",
+  "const RETRY_BASE_DELAY_MS = 1000;",
+  "",
+  "function sleep(ms: number): Promise<void> {",
+  "  return new Promise((resolve) => setTimeout(resolve, ms));",
+  "}",
+  "",
+  "async function fetchWithTimeout(url: string): Promise<string> {",
+  "  const controller = new AbortController();",
+  "  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);",
+  "  try {",
+  "    const res = await fetch(url, { signal: controller.signal });",
+  "    return await res.text();",
+  "  } finally {",
+  "    clearTimeout(timer);",
+  "  }",
+  "}",
+  "",
+  "function createSupabaseClient(url: string, key: string): SupabaseClient {",
+  "  return createClient(url, key, {",
+  "    global: {",
+  "      fetch: (input: RequestInfo | URL, init?: RequestInit) => {",
+  "        const signal = init?.signal ?? AbortSignal.timeout(SUPABASE_TIMEOUT_MS);",
+  "        return fetch(input, { ...init, signal });",
+  "      },",
+  "    },",
+  "  });",
+  "}",
+  "",
+  "type InsertResult = 'saved' | 'duplicate' | 'failed';",
+  "",
+  "async function insertWithRetry(",
+  "  supabase: SupabaseClient,",
+  "  row: Record<string, unknown>,",
+  "  label: string,",
+  "): Promise<InsertResult> {",
+  "  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {",
+  "    try {",
+  "      const { error } = await supabase.from('articles').insert(row);",
+  "      if (!error) return 'saved';",
+  "      if (error.code === '23505') return 'duplicate';",
+  "      console.log(label + ' \u4fdd\u5b58\u30a8\u30e9\u30fc (' + attempt + '/' + MAX_RETRIES + '): ' + error.message);",
+  "    } catch (e: any) {",
+  "      const message = e && e.message ? e.message : String(e);",
+  "      console.log(label + ' \u4f8b\u5916\u767a\u751f (' + attempt + '/' + MAX_RETRIES + '): ' + message);",
+  "    }",
+  "",
+  "    if (attempt < MAX_RETRIES) {",
+  "      const wait = RETRY_BASE_DELAY_MS * Math.pow(2, attempt - 1);",
+  "      console.log(label + ' ' + wait + 'ms \u5f85\u6a5f\u3057\u3066\u518d\u8a66\u884c\u3057\u307e\u3059');",
+  "      await sleep(wait);",
+  "    }",
+  "  }",
+  "  return 'failed';",
+  "}",
+  "",
+  "async function main(): Promise<void> {",
+  "  const supabaseUrl = process.env.SUPABASE_URL;",
+  "  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;",
+  "  if (!supabaseUrl || !supabaseAnonKey) {",
+  "    console.error('\u74b0\u5883\u5909\u6570 SUPABASE_URL / SUPABASE_ANON_KEY \u304c\u8a2d\u5b9a\u3055\u308c\u3066\u3044\u307e\u305b\u3093');",
+  "    process.exit(1);",
+  "  }",
+  "",
+  "  const supabase = createSupabaseClient(supabaseUrl, supabaseAnonKey);",
+  "  const parser = new Parser();",
+  "  const day = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })).getDay();",
+  "",
+  "  let totalSaved = 0;",
+  "  let totalDuplicate = 0;",
+  "  let totalFailed = 0;",
+  "  const fetchFailedSources: string[] = [];",
+  "  const saveFailedSources: string[] = [];",
+  "",
+  "  for (const { name, url, source } of SOURCES) {",
+  "    const label = '[' + name + ']';",
+  "",
+  "    if (name === 'arxiv' && (day === 0 || day === 6)) {",
+  "      console.log(label + ' \u571f\u65e5\u306f\u30b9\u30ad\u30c3\u30d7\u3057\u307e\u3059');",
+  "      continue;",
+  "    }",
+  "",
+  "    console.log(label + ' \u53d6\u5f97\u958b\u59cb...');",
+  "",
+  "    let feed;",
+  "    try {",
+  "      const xml = await fetchWithTimeout(url);",
+  "      feed = await parser.parseString(xml);",
+  "    } catch (e: any) {",
+  "      const message = e && e.message ? e.message : String(e);",
+  "      console.log(label + ' RSS\u53d6\u5f97\u5931\u6557\uff1a\u30b9\u30ad\u30c3\u30d7\u3057\u307e\u3059 (' + message + ')');",
+  "      fetchFailedSources.push(name);",
+  "      continue;",
+  "    }",
+  "",
+  "    console.log(label + ' \u53d6\u5f97\u4ef6\u6570: ' + feed.items.length);",
+  "    if (feed.items.length === 0) {",
+  "      console.log(label + ' \u8a18\u4e8b\u306a\u3057\uff1a\u30b9\u30ad\u30c3\u30d7\u3057\u307e\u3059');",
+  "      continue;",
+  "    }",
+  "",
+  "    const items = feed.items.slice(0, MAX_ITEMS_PER_SOURCE);",
+  "    let saved = 0;",
+  "    let duplicate = 0;",
+  "    let failed = 0;",
+  "",
+  "    for (const item of items) {",
+  "      const title = item.title;",
+  "      const itemUrl = item.link;",
+  "      if (!title || !itemUrl) continue;",
+  "      const publishedAt = item.isoDate ?? item.pubDate ?? null;",
+  "",
+  "      const result = await insertWithRetry(",
+  "        supabase,",
+  "        { title, url: itemUrl, source, published_at: publishedAt },",
+  "        label,",
+  "      );",
+  "",
+  "      if (result === 'saved') {",
+  "        saved++;",
+  "        console.log(label + ' \u4fdd\u5b58\u6210\u529f\uff1a' + title);",
+  "      } else if (result === 'duplicate') {",
+  "        duplicate++;",
+  "        console.log(label + ' \u91cd\u8907\u30b9\u30ad\u30c3\u30d7\uff1a' + title);",
+  "      } else {",
+  "        failed++;",
+  "        console.log(label + ' \u4fdd\u5b58\u5931\u6557\uff08' + MAX_RETRIES + '\u56de\u8a66\u884c\u5f8c\uff09\uff1a' + title);",
+  "      }",
+  "    }",
+  "",
+  "    console.log(label + ' \u5b8c\u4e86 \u2014 \u4fdd\u5b58 ' + saved + ' / \u91cd\u8907 ' + duplicate + ' / \u5931\u6557 ' + failed);",
+  "",
+  "    totalSaved += saved;",
+  "    totalDuplicate += duplicate;",
+  "    totalFailed += failed;",
+  "    if (failed > 0) saveFailedSources.push(name);",
+  "  }",
+  "",
+  "  console.log('========================================');",
+  "  console.log('\u4fdd\u5b58 ' + totalSaved + ' \u4ef6 / \u91cd\u8907 ' + totalDuplicate + ' \u4ef6 / \u5931\u6557 ' + totalFailed + ' \u4ef6');",
+  "  if (fetchFailedSources.length > 0) {",
+  "    console.log('RSS\u53d6\u5f97\u306b\u5931\u6557\u3057\u305f\u30bd\u30fc\u30b9: ' + fetchFailedSources.join(', '));",
+  "  }",
+  "  if (saveFailedSources.length > 0) {",
+  "    console.log('\u4fdd\u5b58\u306b\u5931\u6557\u3057\u305f\u30bd\u30fc\u30b9: ' + saveFailedSources.join(', '));",
+  "  }",
+  "  console.log('========================================');",
+  "",
+  "  if (totalSaved === 0 && totalDuplicate === 0) {",
+  "    console.error('\u5168\u30bd\u30fc\u30b9\u30671\u4ef6\u3082\u4fdd\u5b58\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\u3002\u30d1\u30a4\u30d7\u30e9\u30a4\u30f3\u3092\u4e2d\u65ad\u3057\u307e\u3059\u3002');",
+  "    process.exit(1);",
+  "  }",
+  "",
+  "  if (totalFailed > 0 || fetchFailedSources.length > 0) {",
+  "    console.log('\u4e00\u90e8\u306b\u5931\u6557\u304c\u3042\u308a\u307e\u3057\u305f\u304c\u3001\u5f8c\u7d9a\u51e6\u7406\u3092\u7d99\u7d9a\u3057\u307e\u3059\u3002');",
+  "  }",
+  "}",
+  "",
+  "main();",
+  ""
+];
 
-async function fetchWithTimeout(url: string): Promise<string> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-  try {
-    const res = await fetch(url, { signal: controller.signal });
-    return await res.text();
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-async function main(): Promise<void> {
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !supabaseAnonKey) { console.error('env error'); process.exit(1); }
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
-  const parser = new Parser();
-  const day = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })).getDay();
-  try {
-    for (const { name, url, source } of SOURCES) {
-      if (name === 'arxiv' && (day === 0 || day === 6)) {
-        console.log('[arxiv] 土日はスキップします');
-        continue;
-      }
-      console.log('[' + name + '] 取得開始...');
-      let feed;
-      try {
-        const xml = await fetchWithTimeout(url);
-        feed = await parser.parseString(xml);
-      } catch (e: any) {
-        console.log('[' + name + '] タイムアウトまたは取得失敗：スキップ');
-        continue;
-      }
-      console.log('[' + name + '] 取得件数: ' + feed.items.length);
-      if (feed.items.length === 0) { console.log('[' + name + '] 記事なし：スキップ'); continue; }
-      const items = feed.items.slice(0, MAX_ITEMS_PER_SOURCE);
-      for (const item of items) {
-        const title = item.title;
-        const itemUrl = item.link;
-        if (!title || !itemUrl) continue;
-        const publishedAt = item.isoDate ?? item.pubDate ?? null;
-        const { error } = await supabase.from('articles').insert({ title, url: itemUrl, source, published_at: publishedAt });
-        if (error) {
-          if (error.code === '23505') { console.log('[' + name + '] スキップ：' + title); continue; }
-          throw error;
-        }
-        console.log('[' + name + '] 保存成功：' + title);
-      }
-    }
-  } catch (error) {
-    console.error('保存失敗:', JSON.stringify(error, null, 2));
-    process.exit(1);
-  }
-}
-
-main();
+fs.mkdirSync(path.dirname(target), { recursive: true });
+fs.writeFileSync(target, lines.join('\n'), 'utf8');
+console.log('written: ' + target);
