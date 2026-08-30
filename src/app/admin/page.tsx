@@ -67,8 +67,7 @@ async function unapproveArticle(id: string) {
 async function restoreArticle(id: string) {
   "use server";
   const supabase = createServerSupabaseClient();
-  await supabase.from("articles").update({ status: "translated" }).eq("id", id);
-  revalidatePath("/admin");
+  await supabase.from("articles").update({ status: "translated", approved_at: null }).eq("id", id);  revalidatePath("/admin");
 }
 
 async function login(formData: FormData) {
@@ -186,6 +185,7 @@ export default async function AdminPage({
     .from("articles")
     .select("id, title, url, source, published_at, summary, summary_ja, score, domain")
     .in("status", statuses)
+    .gte("score", tab === "pending" ? 35 : 0)
     .order("published_at", { ascending: false })
     .limit(100);
 
