@@ -14,6 +14,9 @@ const SOURCES = [
   { name: 'defense_one', url: 'https://www.defenseone.com/rss/all/', source: 'defense_one' },
   { name: 'robot_report', url: 'https://www.therobotreport.com/feed/', source: 'robot_report' },
   { name: 'electrek', url: 'https://electrek.co/feed/', source: 'electrek' },
+  { name: 'semiengineering', url: 'https://semiengineering.com/feed/', source: 'semiengineering' },
+  { name: 'arxiv_ar', url: 'https://arxiv.org/rss/cs.AR', source: 'arxiv_ar' },
+  { name: 'semianalysis', url: 'https://semianalysis.com/feed/', source: 'semianalysis' },
   { name: 'techcrunch_startups', url: 'https://techcrunch.com/category/startups/feed/', source: 'techcrunch_startups' },
   { name: 'venturebeat', url: 'https://venturebeat.com/feed/', source: 'venturebeat' },
 ] as const;
@@ -98,8 +101,8 @@ async function main(): Promise<void> {
   for (const { name, url, source } of SOURCES) {
     const label = '[' + name + ']';
 
-    if (name === 'arxiv' && (day === 0 || day === 6)) {
-      console.log(label + ' 土日はスキップします');
+    if (name.startsWith('arxiv') && (day === 0 || day === 6)) {
+            console.log(label + ' 土日はスキップします');
       continue;
     }
 
