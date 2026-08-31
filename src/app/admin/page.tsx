@@ -1,8 +1,8 @@
 ﻿import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "mirai2026signaladmin";
+import { isAdminAuthenticated } from "@/lib/supabase/auth";
+import AdminLogin from "@/app/components/AdminLogin";
+import AdminNav from "@/app/components/AdminNav";
 
 type Article = {
   id: string;
@@ -67,24 +67,8 @@ async function unapproveArticle(id: string) {
 async function restoreArticle(id: string) {
   "use server";
   const supabase = createServerSupabaseClient();
-  await supabase.from("articles").update({ status: "translated", approved_at: null }).eq("id", id);  revalidatePath("/admin");
-}
-
-async function login(formData: FormData) {
-  "use server";
-  const password = formData.get("password");
-  if (password === ADMIN_PASSWORD) {
-    const { cookies } = await import("next/headers");
-    (await cookies()).set("admin_auth", "1", { httpOnly: true, path: "/" });
-  }
-  redirect("/admin");
-}
-
-async function logout() {
-  "use server";
-  const { cookies } = await import("next/headers");
-  (await cookies()).delete("admin_auth");
-  redirect("/admin");
+  await supabase.from("articles").update({ status: "translated", approved_at: null }).eq("id", id);
+  revalidatePath("/admin");
 }
 
 export default async function AdminPage({
@@ -92,30 +76,8 @@ export default async function AdminPage({
 }: {
   searchParams: Promise<{ tab?: string; month?: string }>;
 }) {
-  const { cookies } = await import("next/headers");
-  const isAuth = (await cookies()).get("admin_auth")?.value === "1";
-
-  if (!isAuth) {
-    return (
-      <div style={{ background: "var(--ms-bg)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ background: "var(--ms-bg-card)", border: "0.5px solid var(--ms-border)", borderRadius: "12px", padding: "32px", width: "320px" }}>
-          <div style={{ fontSize: "15px", fontWeight: 500, color: "var(--ms-text-heading)", marginBottom: "24px", textAlign: "center" }}>
-            Mirai<span style={{ color: "var(--ms-accent-strong)" }}>Signal</span> Admin
-          </div>
-          <form action={login}>
-            <input
-              type="password"
-              name="password"
-              placeholder="パスワード"
-              style={{ width: "100%", padding: "10px 12px", background: "var(--ms-bg-card)", border: "0.5px solid var(--ms-border)", borderRadius: "6px", color: "var(--ms-text-primary)", fontSize: "14px", marginBottom: "12px", boxSizing: "border-box" }}
-            />
-            <button type="submit" style={{ width: "100%", padding: "10px", background: "var(--ms-accent)", border: "none", borderRadius: "6px", color: "var(--ms-on-accent)", fontSize: "14px", cursor: "pointer" }}>
-              ログイン
-            </button>
-          </form>
-        </div>
-      </div>
-    );
+  if (!(await isAdminAuthenticated())) {
+    return <AdminLogin />;
   }
 
   // URLのtabパラメータとmonthパラメータを取得
@@ -153,7 +115,7 @@ export default async function AdminPage({
   const rangeStart = `${targetMonth}-01T00:00:00+09:00`;
   const rangeEnd   = `${targetMonth}-${String(daysInMonth).padStart(2, "0")}T23:59:59+09:00`;
 
-  // created_at と status だけを取得する（カレンダー用の軽いクエリ）
+  // approved_at と status だけを取得する（カレンダー用の軽いクエリ）
   const { data: calRaw } = await supabase
     .from("articles")
     .select("approved_at, status")
@@ -217,17 +179,7 @@ export default async function AdminPage({
 
   return (
     <div style={{ background: "var(--ms-bg)", minHeight: "100vh" }}>
-      <nav style={{ background: "var(--ms-bg-nav)", borderBottom: "0.5px solid var(--ms-border-nav)", padding: "14px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ fontSize: "15px", fontWeight: 500, color: "var(--ms-text-heading)", letterSpacing: "0.06em" }}>
-          Mirai<span style={{ color: "var(--ms-accent-strong)" }}>Signal</span>
-          <span style={{ fontSize: "11px", color: "var(--ms-accent)", marginLeft: "10px" }}>ADMIN</span>
-        </div>
-        <form action={logout}>
-          <button type="submit" style={{ fontSize: "12px", color: "var(--ms-text-secondary)", background: "transparent", border: "none", cursor: "pointer" }}>
-            ログアウト
-          </button>
-        </form>
-      </nav>
+      <AdminNav current="review" />
 
       <main style={{ maxWidth: "720px", margin: "0 auto", padding: "32px 24px" }}>
 
