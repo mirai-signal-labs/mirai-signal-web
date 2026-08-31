@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { isAdminAuthenticated } from "@/lib//supabase/auth";
+import { isAdminAuthenticated } from "@/lib/supabase/auth";
 import AdminLogin from "@/app/components/AdminLogin";
 import AdminNav from "@/app/components/AdminNav";
 
@@ -20,6 +20,7 @@ type PublishedRow = {
   id: string;
   title: string;
   title_ja: string | null;
+  summary_ja: string | null;
   url: string;
   source: string | null;
   domain: string | null;
@@ -143,7 +144,7 @@ const td = {
 export default async function AdminStatsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ period?: string }>;
+  searchParams: Promise<{ period?: string; domains?: string }>;
 }) {
   if (!(await isAdminAuthenticated())) {
     return <AdminLogin />;
@@ -152,6 +153,13 @@ export default async function AdminStatsPage({
   const params = await searchParams;
   const period: Period =
     params.period === "30" ? "30" : params.period === "all" ? "all" : "7";
+
+  // 選択中の領域フィルタ。"ai,robotics" のようなカンマ区切り文字列で受け取る
+  // 空の場合はフィルタなし（全件表示）
+  const selectedDomains = (params.domains ?? "")
+    .split(",")
+    .map((d) => d.trim())
+    .filter((d) => d.length > 0);
 
   const supabase = createServerSupabaseClient();
 
@@ -243,14 +251,16 @@ export default async function AdminStatsPage({
     .sort((a, b) => b.yield - a.yield);
 
   // ── 掲載記事の一覧 ──────────────────────────────────────────────
+  // フィルタは一覧にだけ効かせる（上の統計は全領域のまま）
   let listQuery = supabase
     .from("articles")
-    .select("id, title, title_ja, url, source, domain, score, approved_at")
+    .select("id, title, title_ja, summary_ja, url, source, domain, score, approved_at")
     .eq("status", "approved")
     .order("score", { ascending: false })
     .limit(100);
 
   if (days) listQuery = listQuery.gte("approved_at", new Date(currentStartMs).toISOString());
+  if (selectedDomains.length > 0) listQuery = listQuery.in("domain", selectedDomains);
 
   const { data: publishedList } = await listQuery;
   const articles = (publishedList ?? []) as PublishedRow[];
@@ -261,6 +271,20 @@ export default async function AdminStatsPage({
     { key: "30", label: "直近30日" },
     { key: "all", label: "全期間" },
   ];
+
+  // ── 領域フィルタのボタン ────────────────────────────────────────
+  // 押すと選択に追加、もう一度押すと解除されるURLを組み立てる
+  // domain が null の記事はフィルタで絞れないので候補から除く
+  const filterableDomains = domainKeys.filter((d) => d !== "(未分類)").sort();
+
+  function buildDomainHref(domain: string): string {
+    const next = selectedDomains.includes(domain)
+      ? selectedDomains.filter((d) => d !== domain)
+      : [...selectedDomains, domain];
+    const query = new URLSearchParams({ period });
+    if (next.length > 0) query.set("domains", next.join(","));
+    return `/admin/stats?${query.toString()}`;
+  }
 
   const summaryCards = [
     {
@@ -300,7 +324,7 @@ export default async function AdminStatsPage({
           {periods.map((p) => (
             <a
               key={p.key}
-              href={`/admin/stats?period=${p.key}`}
+              href={`/admin/stats?period=${p.key}${selectedDomains.length > 0 ? `&domains=${selectedDomains.join(",")}` : ""}`}
               style={{
                 fontSize: "12px",
                 padding: "6px 14px",
@@ -442,9 +466,54 @@ export default async function AdminStatsPage({
         {/* ── 5. 掲載記事一覧 ────────────────────────────────────── */}
         <div style={card}>
           <h2 style={sectionTitle}>掲載記事（スコア順・最大100件）</h2>
+
+          {/* 領域フィルタ。押すたびに追加・解除される */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "16px" }}>
+            {filterableDomains.map((d) => {
+              const active = selectedDomains.includes(d);
+              return (
+                <a
+                  key={d}
+                  href={buildDomainHref(d)}
+                  style={{
+                    fontSize: "11px",
+                    padding: "4px 12px",
+                    borderRadius: "20px",
+                    textDecoration: "none",
+                    color: active ? "var(--ms-accent-strong)" : "var(--ms-text-secondary)",
+                    background: active ? "var(--ms-accent-dim)" : "transparent",
+                    border: `0.5px solid ${active ? "var(--ms-accent)" : "var(--ms-border)"}`,
+                  }}
+                >
+                  {d}
+                </a>
+              );
+            })}
+            {selectedDomains.length > 0 && (
+              <a
+                href={`/admin/stats?period=${period}`}
+                style={{
+                  fontSize: "11px",
+                  padding: "4px 12px",
+                  borderRadius: "20px",
+                  textDecoration: "none",
+                  color: "var(--ms-text-muted)",
+                  border: "0.5px solid transparent",
+                }}
+              >
+                解除
+              </a>
+            )}
+          </div>
+
+          <p style={{ fontSize: "11px", color: "var(--ms-text-muted)", margin: "0 0 12px" }}>
+            {articles.length}件
+            {selectedDomains.length > 0 && `（${selectedDomains.join(" / ")}）`}
+          </p>
+
           {articles.length === 0 ? (
             <p style={{ fontSize: "13px", color: "var(--ms-text-secondary)", margin: 0 }}>
-              この期間に掲載した記事がありません。
+              条件に合う掲載記事がありません。
             </p>
           ) : (
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "2px" }}>
@@ -452,33 +521,37 @@ export default async function AdminStatsPage({
                 <li
                   key={a.id}
                   style={{
-                    display: "flex",
-                    alignItems: "baseline",
-                    gap: "10px",
-                    padding: "8px 4px",
+                    padding: "12px 4px",
                     borderBottom: "0.5px solid var(--ms-border-soft, var(--ms-border))",
                   }}
                 >
-                  <span style={{ fontSize: "11px", color: "var(--ms-green)", width: "26px", flexShrink: 0, textAlign: "right" }}>
-                    {a.score ?? "-"}
-                  </span>
-                  <span style={{ fontSize: "10px", color: "var(--ms-text-meta)", width: "84px", flexShrink: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {a.domain ?? "-"}
-                  </span>
-                  <span style={{ fontSize: "10px", color: "var(--ms-text-muted)", width: "104px", flexShrink: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {a.source ?? "-"}
-                  </span>
-                  <a
-                    href={a.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ fontSize: "12px", color: "var(--ms-text-primary)", textDecoration: "none", lineHeight: 1.5, flex: 1 }}
-                  >
-                    {a.title_ja ?? a.title}
-                  </a>
-                  <span style={{ fontSize: "10px", color: "var(--ms-text-muted)", flexShrink: 0 }}>
-                    {formatDate(a.approved_at)}
-                  </span>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: "10px", marginBottom: "6px" }}>
+                    <span style={{ fontSize: "11px", color: "var(--ms-green)", width: "26px", flexShrink: 0, textAlign: "right" }}>
+                      {a.score ?? "-"}
+                    </span>
+                    <span style={{ fontSize: "10px", color: "var(--ms-text-meta)", background: "var(--ms-bg-tag)", padding: "1px 7px", borderRadius: "20px", flexShrink: 0 }}>
+                      {a.domain ?? "-"}
+                    </span>
+                    <span style={{ fontSize: "10px", color: "var(--ms-text-muted)", flexShrink: 0 }}>
+                      {a.source ?? "-"}
+                    </span>
+                    <a
+                      href={a.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontSize: "13px", color: "var(--ms-text-primary)", textDecoration: "none", lineHeight: 1.5, flex: 1 }}
+                    >
+                      {a.title_ja ?? a.title}
+                    </a>
+                    <span style={{ fontSize: "10px", color: "var(--ms-text-muted)", flexShrink: 0 }}>
+                      {formatDate(a.approved_at)}
+                    </span>
+                  </div>
+                  {a.summary_ja && (
+                    <p style={{ fontSize: "12px", color: "var(--ms-text-secondary)", lineHeight: 1.7, margin: "0 0 0 36px" }}>
+                      {a.summary_ja}
+                    </p>
+                  )}
                 </li>
               ))}
             </ul>
