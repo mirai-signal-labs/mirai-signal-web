@@ -1,8 +1,6 @@
 name: Daily Pipeline
 
 on:
-  schedule:
-    - cron: '23 21 * * *'
   workflow_dispatch:
 
 jobs:
