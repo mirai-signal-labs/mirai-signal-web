@@ -16,6 +16,12 @@ const MAX_SCORE = 50;
 const PROMPT = readFileSync(join(process.cwd(), 'scripts', 'process_prompt.txt'), 'utf-8');
 
 // ---- 型定義 ----
+type GlossaryTerm = {
+  term: string;
+  term_en: string;
+  explanation: string;
+  example_context: string;
+};
 type ProcessResult = {
   domain_relevance: number;
   technical_depth: number;
@@ -32,6 +38,7 @@ type ProcessResult = {
   importance_reason: string;
   summary: string;
   summary_ja: string;
+  glossary_terms: GlossaryTerm[];
 };
 
 // ---- 1件分のJSONを検証・パース ----
@@ -51,6 +58,10 @@ function parseOneResult(obj: any): ProcessResult {
   }
   if (!obj.summary || !obj.summary_ja) {
     throw new Error('要約が空です');
+  }
+  if (!Array.isArray(obj.glossary_terms)) {
+    console.log('glossary_termsが不正な形式のため空配列で処理を続行します');
+    obj.glossary_terms = [];
   }
   return obj as ProcessResult;
 }
@@ -91,6 +102,57 @@ async function generateWithRetry(model: any, content: string): Promise<string> {
   throw new Error('リトライ上限に達しました');
 }
 
+// ---- 用語集への保存（重複チェック付き） ----
+async function saveGlossaryTerms(
+  supabase: any,
+  articleId: string,
+  domain: string | null,
+  terms: GlossaryTerm[],
+): Promise<void> {
+  for (const t of terms) {
+    if (!t.term) continue;
+
+    // 既存の用語を探す（同じ用語を2回登録しないようにする）
+    const { data: existing } = await supabase
+      .from('glossary_terms')
+      .select('id')
+      .eq('term', t.term)
+      .maybeSingle();
+
+    let termId: string;
+
+    if (existing) {
+      termId = existing.id;
+    } else {
+      const { data: inserted, error: insertError } = await supabase
+        .from('glossary_terms')
+        .insert({
+          term: t.term,
+          term_en: t.term_en || null,
+          explanation: t.explanation,
+          domain,
+          status: 'pending',
+        })
+        .select('id')
+        .single();
+
+      if (insertError || !inserted) {
+        console.log('  用語集への保存に失敗しました（' + t.term + '）：' + insertError?.message);
+        continue;
+      }
+      termId = inserted.id;
+    }
+
+    // 記事との紐付け（同じ記事×同じ用語の二重リンクを防ぐ）
+    await supabase
+      .from('glossary_term_articles')
+      .upsert(
+        { term_id: termId, article_id: articleId, example_context: t.example_context || null },
+        { onConflict: 'term_id,article_id', ignoreDuplicates: true },
+      );
+  }
+}
+
 // ---- メイン処理 ----
 async function main(): Promise<void> {
   const supabaseUrl = process.env.SUPABASE_URL;
@@ -106,7 +168,7 @@ async function main(): Promise<void> {
   try {
     const { data: articles, error: fetchError } = await supabase
       .from('articles')
-      .select('id, title')
+      .select('id, title, description')
       .eq('status', 'pending')
       .limit(MAX_ARTICLES);
 
@@ -127,10 +189,13 @@ async function main(): Promise<void> {
       // Geminiへ送るプロンプトを作成
       // タイトルを番号付きリストで渡す
       const batchPrompt =
-        `以下の${batch.length}件の記事タイトルをそれぞれ評価してください。\n` +
+        `以下の${batch.length}件の記事について、タイトルと概要（ある場合）を確認し、それぞれ評価してください。\n` +
         `必ず${batch.length}件分のJSONオブジェクトを含む配列を返してください。\n` +
         `順番は入力と同じ順序で返してください。\n\n` +
-        batch.map((a, idx) => `${idx + 1}. ${a.title}`).join('\n');
+        batch.map((a, idx) => {
+          const desc = a.description ? `\n概要: ${a.description}` : '';
+          return `${idx + 1}. タイトル: ${a.title}${desc}`;
+        }).join('\n\n');
 
       try {
         const text = await generateWithRetry(model, batchPrompt);
@@ -164,7 +229,12 @@ async function main(): Promise<void> {
             article.title + ' -> ' +
             (approved ? '承認待ち' : '却下')
           );
+
+          if (approved && result.glossary_terms.length > 0) {
+            await saveGlossaryTerms(supabase, article.id, primaryDomain, result.glossary_terms);
+          }
         }
+        
       } catch (e: any) {
         // バッチ全体が失敗した場合、1件ずつフォールバック処理
         console.log(`バッチ失敗（${e.message}）→ 1件ずつ処理に切り替えます`);
@@ -195,6 +265,10 @@ async function main(): Promise<void> {
               '[フォールバック] [' + total + '/' + MAX_SCORE + '] [' + domainLabel + '] ' +
               article.title + ' -> ' + (approved ? '承認待ち' : '却下')
             );
+            
+            if (approved && result.glossary_terms.length > 0) {
+              await saveGlossaryTerms(supabase, article.id, primaryDomain, result.glossary_terms);
+            }
           } catch (e2: any) {
             console.log('スキップ（エラー）：' + article.title + ' / ' + e2.message);
           }

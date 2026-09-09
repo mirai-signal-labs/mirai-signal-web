@@ -334,6 +334,53 @@ Before returning:
 5. If uncertain, choose lower scores.
 
 ==================================================
+GLOSSARY EXTRACTION
+===================
+
+Identify technical terms in this article that a learning-level Japanese
+reader (student, beginner engineer) is unlikely to know.
+
+CRITICAL: The "explanation" and "example_context" fields MUST be written
+in natural Japanese (日本語), never in English, even if the term itself
+is an English loanword, acronym, or the source article is in English.
+
+Only extract terms if you have enough content to explain them accurately.
+
+If only a title is available, extract at most 1-2 terms, and only if you
+are highly confident about the explanation. In this case, "example_context"
+must only paraphrase the literal title text — do not speculate or invent
+claims about what the article's body might discuss.
+
+If a description/abstract is available, extract up to 5 terms grounded
+in that content.
+
+Do not extract terms that a reader who already follows AI/tech news would
+be expected to know, including but not limited to:
+AI, LLM, GPU, CPU, モデル, AIモデル, アルゴリズム, テスト, 検証,
+インターネット, スマートフォン, オープンソース
+
+Also do not extract:
+
+* Company names, product names, or people's names
+* Terms already fully explained within the title/description itself
+
+For each term, output:
+
+term: Japanese term (or katakana transliteration)
+term_en: English equivalent, if applicable
+explanation: 2-3 sentences in Japanese, accurate but accessible to a learner
+example_context: how the term was used in this article (one sentence, in Japanese)
+
+Preferred terminology (must match if applicable):
+
+reasoning → 推論
+agent → エージェント
+alignment → アラインメント
+inference → 推論実行
+
+If no suitable terms are found, return an empty array.
+
+==================================================
 OUTPUT SCHEMA
 =============
 
@@ -361,7 +408,9 @@ OUTPUT SCHEMA
 
 "summary": "",
 
-"summary_ja": ""
+"summary_ja": "",
+
+"glossary_terms": []
 }
 
 total_score must equal:

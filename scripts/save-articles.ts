@@ -135,10 +135,13 @@ async function main(): Promise<void> {
       const itemUrl = item.link;
       if (!title || !itemUrl) continue;
       const publishedAt = item.isoDate ?? item.pubDate ?? null;
+      const description = item.contentSnippet
+        ? item.contentSnippet.trim().slice(0, 1500)
+        : null;
 
       const result = await insertWithRetry(
         supabase,
-        { title, url: itemUrl, source, published_at: publishedAt },
+        { title, url: itemUrl, source, published_at: publishedAt, description },
         label,
       );
 
