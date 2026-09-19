@@ -229,7 +229,8 @@ async function saveGlossaryTerms(
           term_en: t.term_en || null,
           explanation: t.explanation,
           domain,
-          status: 'pending',
+          status: 'approved',
+          approved_at: new Date().toISOString(),
         })
         .select('id')
         .single();

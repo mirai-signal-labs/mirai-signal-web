@@ -1,7 +1,6 @@
 import { logout } from "@/lib/supabase/auth";
 
-export default function AdminNav({ current }: { current: "review" | "stats" }) {
-  const linkStyle = (active: boolean) => ({
+export default function AdminNav({ current }: { current: "review" | "stats" | "glossary" }) {  const linkStyle = (active: boolean) => ({
     fontSize: "12px",
     textDecoration: "none",
     color: active ? "var(--ms-accent-strong)" : "var(--ms-text-secondary)",
@@ -16,6 +15,7 @@ export default function AdminNav({ current }: { current: "review" | "stats" }) {
       </div>
       <div style={{ display: "flex", alignItems: "center" }}>
         <a href="/admin" style={linkStyle(current === "review")}>記事</a>
+        <a href="/admin/glossary" style={linkStyle(current === "glossary")}>用語集</a>
         <a href="/admin/stats" style={linkStyle(current === "stats")}>統計</a>
         <form action={logout} style={{ marginLeft: "16px" }}>
           <button type="submit" style={{ fontSize: "12px", color: "var(--ms-text-secondary)", background: "transparent", border: "none", cursor: "pointer" }}>
