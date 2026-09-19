@@ -50,6 +50,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
+  const { data: glossaryTerms } = await supabase
+    .from("glossary_terms")
+    .select("term, created_at")
+    .eq("status", "approved");
+
+  const glossaryPages = (glossaryTerms ?? []).map((t) => ({
+    url: BASE_URL + "/glossary/" + encodeURIComponent(t.term),
+    lastModified: t.created_at ? new Date(t.created_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.4,
+  }));
+
   return [
     {
       url: BASE_URL,
@@ -57,8 +69,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily",
       priority: 1.0,
     },
+    {
+      url: BASE_URL + "/glossary",
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.7,
+    },
     ...domainPages,
     ...archivePages,
     ...articlePages,
+    ...glossaryPages,
   ];
 }

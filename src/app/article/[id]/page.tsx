@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ThemeToggle from "@/app/components/ThemeToggle";
+import type { ReactNode } from "react";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -56,6 +57,39 @@ function formatDate(d: string | null): string {
   });
 }
 
+// 本文中の難単語を用語集ページへのリンクに変換する
+// terms: この記事に紐づく承認済み用語（長い用語を優先的にマッチさせる）
+function linkifyGlossaryTerms(text: string, terms: string[]): ReactNode {
+  if (!text || terms.length === 0) return text;
+
+  // 長い用語を先にマッチさせる（例：「推論」より「推論実行」を優先）
+  const sorted = [...new Set(terms)].sort((a, b) => b.length - a.length);
+  const escaped = sorted.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const pattern = new RegExp("(" + escaped.join("|") + ")", "g");
+
+  const parts = text.split(pattern);
+  const termSet = new Set(sorted);
+
+  return parts.map((part, i) =>
+    termSet.has(part) ? (
+      <Link
+        key={i}
+        href={"/glossary/" + encodeURIComponent(part)}
+        style={{
+          color: "var(--ms-accent-strong)",
+          textDecoration: "underline",
+          textDecorationStyle: "dotted",
+          textUnderlineOffset: "3px",
+        }}
+      >
+        {part}
+      </Link>
+    ) : (
+      part
+    )
+  );
+}
+
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = createServerSupabaseClient();
@@ -67,6 +101,19 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     .single();
 
   if (!article) notFound();
+
+  // この記事に紐づく承認済み用語を取得（本文リンク化用）
+  const { data: glossaryLinks } = await supabase
+    .from("glossary_term_articles")
+    .select("glossary_terms(term, status)")
+    .eq("article_id", id);
+
+  type LinkedTerm = { term: string; status: string } | null;
+
+  const glossaryTermList = (glossaryLinks ?? [])
+    .map((l) => l.glossary_terms as unknown as LinkedTerm)
+    .filter((t): t is { term: string; status: string } => !!t && t.status === "approved")
+    .map((t) => t.term);
 
   const domainLabel = article.domain ? DOMAIN_LABELS[article.domain] ?? article.domain : null;
   const title = article.title_ja ?? article.title;
@@ -120,7 +167,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
               日本語要約
             </p>
             <p style={{ fontSize: "16px", color: "var(--ms-text-primary)", lineHeight: 2, margin: 0, whiteSpace: "pre-wrap" }}>
-              {article.summary_ja}
+              {linkifyGlossaryTerms(article.summary_ja, glossaryTermList)}
             </p>
           </div>
         )}
