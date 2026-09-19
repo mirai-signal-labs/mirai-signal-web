@@ -76,6 +76,7 @@ export default async function Home() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <a href='https://x.com/MqS_quest' target='_blank' rel='noopener noreferrer' style={{ fontSize: '11px', color: 'var(--ms-accent-strong)', textDecoration: 'none', whiteSpace: 'nowrap' }}>X フォローする</a>
+          <Link href='/glossary' style={{ fontSize: '11px', color: 'var(--ms-text-label)', textDecoration: 'none', whiteSpace: 'nowrap' }}>用語集</Link>
           <Link href='/admin' style={{ fontSize: '11px', color: 'var(--ms-text-label)', textDecoration: 'none' }}>Admin</Link>
           <ThemeToggle />
         </div>
@@ -106,6 +107,13 @@ export default async function Home() {
             <a href='https://x.com/MqS_quest' target='_blank' rel='noopener noreferrer' style={{ fontSize: '11px', color: 'var(--ms-accent-strong)', textDecoration: 'none', whiteSpace: 'nowrap', display: 'block' }}>
               X @MqS_quest をフォロー
             </a>
+          </div>
+
+          <div style={{ padding: '0 14px 14px', borderBottom: '0.5px solid var(--ms-border)', marginBottom: '8px' }}>
+            <Link href='/glossary' style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--ms-accent-strong)', textDecoration: 'none' }}>
+              <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--ms-accent)', flexShrink: 0 }}></span>
+              用語集を見る
+            </Link>
           </div>
 
           {DOMAINS.map((d) => {

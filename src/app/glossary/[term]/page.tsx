@@ -24,7 +24,8 @@ function formatDate(d: string | null): string {
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ term: string }> }) {
-  const { term } = await params;
+  const { term: rawTerm } = await params;
+  const term = decodeURIComponent(rawTerm);
   const supabase = createServerSupabaseClient();
   const { data: entry } = await supabase
     .from("glossary_terms")
@@ -58,7 +59,8 @@ export async function generateMetadata({ params }: { params: Promise<{ term: str
 }
 
 export default async function GlossaryTermPage({ params }: { params: Promise<{ term: string }> }) {
-  const { term } = await params;
+  const { term: rawTerm } = await params;
+  const term = decodeURIComponent(rawTerm);
   const supabase = createServerSupabaseClient();
 
   const { data: entry } = await supabase

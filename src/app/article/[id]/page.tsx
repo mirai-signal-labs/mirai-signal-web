@@ -74,7 +74,7 @@ function linkifyGlossaryTerms(text: string, terms: string[]): ReactNode {
     termSet.has(part) ? (
       <Link
         key={i}
-        href={"/glossary/" + encodeURIComponent(part)}
+        href={"/glossary/" + part}
         style={{
           color: "var(--ms-accent-strong)",
           textDecoration: "underline",

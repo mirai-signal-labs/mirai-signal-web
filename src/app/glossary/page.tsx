@@ -86,7 +86,7 @@ export default async function GlossaryIndexPage() {
                 {grouped[key].map((t) => (
                   <Link
                     key={t.term}
-                    href={"/glossary/" + encodeURIComponent(t.term)}
+                    href={"/glossary/" + t.term}
                     style={{
                       fontSize: "13px",
                       color: "var(--ms-text-primary)",
