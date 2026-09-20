@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import GlossaryGacha from "./GlossaryGacha";
 
 const DOMAIN_LABELS: Record<string, string> = {
   ai: "AI",
@@ -20,6 +21,7 @@ type Term = {
   term: string;
   term_en: string | null;
   domain: string | null;
+  explanation: string;
 };
 
 export default function GlossarySearch({ terms }: { terms: Term[] }) {
@@ -49,14 +51,14 @@ export default function GlossarySearch({ terms }: { terms: Term[] }) {
 
   return (
     <div>
-      <div style={{ marginBottom: "32px" }}>
+      <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="用語を検索（日本語・英語どちらでも）"
           style={{
-            width: "100%",
+            flex: "1 1 240px",
             boxSizing: "border-box",
             fontSize: "14px",
             padding: "10px 16px",
@@ -67,10 +69,12 @@ export default function GlossarySearch({ terms }: { terms: Term[] }) {
             outline: "none",
           }}
         />
-        <p style={{ fontSize: "11px", color: "var(--ms-text-muted)", margin: "8px 0 0" }}>
-          {filtered.length}件 / 全{terms.length}件
-        </p>
+        <GlossaryGacha terms={terms} />
       </div>
+
+      <p style={{ fontSize: "11px", color: "var(--ms-text-muted)", margin: "8px 0 32px" }}>
+        {filtered.length}件 / 全{terms.length}件
+      </p>
 
       {domainKeys.length === 0 ? (
         <p style={{ color: "var(--ms-text-secondary)", fontSize: "14px" }}>
@@ -91,7 +95,7 @@ export default function GlossarySearch({ terms }: { terms: Term[] }) {
               {grouped[key].map((t) => (
                 <Link
                   key={t.term}
-                  href={"/glossary/" + t.term}
+                  href={"/glossary/" + encodeURIComponent(t.term)}
                   style={{
                     fontSize: "13px",
                     color: "var(--ms-text-primary)",

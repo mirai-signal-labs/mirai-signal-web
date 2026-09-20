@@ -4,6 +4,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import SubscribeForm from '@/app/components/SubscribeForm';
 import ThemeToggle from "@/app/components/ThemeToggle";
+import GlossaryGacha from "@/app/components/GlossaryGacha";
 
 const DOMAINS = [
   { key: 'ai', label: 'AI', desc: 'LLM / Agents / AGI / OSS' },
@@ -28,6 +29,13 @@ type Article = {
   title_ja: string | null;
 };
 
+type GlossaryTerm = {
+  term: string;
+  term_en: string | null;
+  domain: string | null;
+  explanation: string;
+};
+
 function formatDate(d: string | null): string {
   if (!d) return '-';
   return new Date(d).toLocaleDateString('ja-JP', { month: 'long', day: 'numeric' });
@@ -48,7 +56,13 @@ export default async function Home() {
     .select('domain')
     .eq('status', 'approved');
 
+  const { data: glossaryTerms } = await supabase
+    .from('glossary_terms')
+    .select('term, term_en, domain, explanation')
+    .eq('status', 'approved');
+
   const items = (articles ?? []) as Article[];
+  const glossaryItems = (glossaryTerms ?? []) as GlossaryTerm[];
 
   const domainCounts: Record<string, number> = {};
   (countData ?? []).forEach((a) => {
@@ -129,6 +143,20 @@ export default async function Home() {
         </aside>
 
         <main style={{ padding: '24px', overflowY: 'auto' }}>
+          {glossaryItems.length > 0 && (
+            <div style={{ marginBottom: '32px', padding: '18px 20px', background: 'var(--ms-bg-card)', border: '0.5px solid var(--ms-border)', borderLeft: '3px solid var(--ms-accent)', borderRadius: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+              <div>
+                <span style={{ fontSize: '9px', color: 'var(--ms-accent-strong)', background: 'var(--ms-accent-dim)', padding: '2px 10px', borderRadius: '20px', letterSpacing: '0.08em', display: 'inline-block', marginBottom: '8px' }}>
+                  🎲 用語ガチャ
+                </span>
+                <p style={{ fontSize: '12px', color: 'var(--ms-text-secondary)', margin: 0, lineHeight: 1.6 }}>
+                  専門用語をランダムに1つ紹介します
+                </p>
+              </div>
+              <GlossaryGacha terms={glossaryItems} buttonLabel="🎲 ガチャを引く" />
+            </div>
+          )}
+
           {DOMAINS.map((domain) => {
             const domainArticles = getByDomain(domain.key).slice(0, 3);
             if (domainArticles.length === 0) return null;

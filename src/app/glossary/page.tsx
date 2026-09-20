@@ -12,6 +12,7 @@ type Term = {
   term: string;
   term_en: string | null;
   domain: string | null;
+  explanation: string;
 };
 
 export default async function GlossaryIndexPage() {
@@ -19,7 +20,7 @@ export default async function GlossaryIndexPage() {
 
   const { data: terms } = await supabase
     .from("glossary_terms")
-    .select("term, term_en, domain")
+    .select("term, term_en, domain, explanation")
     .eq("status", "approved")
     .order("term", { ascending: true });
 
